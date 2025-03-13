@@ -1,4 +1,4 @@
-// index.js
+// server/index.js
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
@@ -9,6 +9,7 @@ const cookieParser = require("cookie-parser");
 const csurf = require("csurf");
 
 const authRoutes = require("./routes/auth");
+const teacherAuthRoutes = require("./routes/teacherAuth");
 const verifyToken = require("./middleware/auth");
 
 const app = express();
@@ -35,12 +36,12 @@ app.use(csurf({ cookie: true }));
 
 // Endpoint to retrieve CSRF token
 app.get("/api/csrf-token", (req, res) => {
-  // Generate a token and return it in JSON format
   res.json({ csrfToken: req.csrfToken() });
 });
 
-// Mount the authentication routes
+// Mount the authentication routes for users and teachers
 app.use("/api/auth", authRoutes);
+app.use("/api/teacher", teacherAuthRoutes);
 
 // Example protected route
 app.get("/api/protected", verifyToken, (req, res) => {
@@ -49,10 +50,8 @@ app.get("/api/protected", verifyToken, (req, res) => {
 
 // Global error handling middleware for logging and safe error responses
 app.use((err, req, res, next) => {
-  // Log error details for audit purposes
   console.error(err.stack);
 
-  // Handle CSRF errors specifically
   if (err.code === "EBADCSRFTOKEN") {
     return res.status(403).json({ message: "Form tampered with." });
   }
