@@ -1,4 +1,4 @@
-// models/User.js
+// server/models/User.js
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
@@ -16,6 +16,12 @@ const UserSchema = new mongoose.Schema({
     match: [/^\d{10}$/, "Please fill a valid 10-digit mobile number"],
   },
   password: { type: String, required: true },
+  isVerified: { type: Boolean, default: false },
+  otpSecret: { type: String },
+  otpExpires: { type: Date },
+  // Fields for password reset functionality
+  passwordResetToken: { type: String },
+  passwordResetExpires: { type: Date },
 });
 
 // Pre-save hook to hash password before saving user
