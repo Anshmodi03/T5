@@ -1,4 +1,6 @@
 import "./App.css";
+import CoursePage from "./components/Courses/CoursePage";
+import MainCourse from "./components/Courses/MainCourse";
 import Acheivement from "./components/Frontpage/Acheivement";
 import AuthBanner from "./components/Frontpage/AuthBanner";
 import { Course } from "./components/Frontpage/Course";
@@ -13,17 +15,19 @@ import Testimonial from "./components/Frontpage/Testimonial";
 function App() {
   return (
     <>
-      {/* <AuthBanner /> */}
+      {/* <AuthBanner />
       <Header />
       <Navbar />
       <Course />
-
       <Teacher />
       <Acheivement />
       <Testimonial />
       <FAQSection />
       <Footer />
-      <Subscribe />
+      <Subscribe /> */}
+      <Header />
+      <CoursePage />
+      <Footer />
     </>
   );
 }
