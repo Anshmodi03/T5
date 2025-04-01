@@ -2,93 +2,8 @@
 
 import { useRef, useEffect } from "react";
 import { motion, useAnimation, useInView } from "framer-motion";
-
-const courses = [
-  {
-    title: "JEE Physics",
-    description:
-      "Master core concepts in Mechanics, Electricity, and Modern Physics to excel in JEE.",
-    icon: "⚛️",
-    color: "from-blue-500 to-indigo-600",
-    features: [
-      "Mechanics",
-      "Thermodynamics",
-      "Modern Physics",
-      "Optics",
-      "Electromagnetism",
-    ],
-  },
-  {
-    title: "JEE Chemistry",
-    description:
-      "Dive into Organic, Inorganic, and Physical Chemistry for a complete exam preparation.",
-    icon: "🧪",
-    color: "from-green-500 to-teal-600",
-    features: [
-      "Organic Chemistry",
-      "Inorganic Chemistry",
-      "Physical Chemistry",
-      "Chemical Reactions",
-      "Periodic Trends",
-    ],
-  },
-  {
-    title: "JEE Mathematics",
-    description:
-      "Cover advanced topics in Calculus, Algebra, and Geometry to build a strong foundation.",
-    icon: "📐",
-    color: "from-purple-500 to-indigo-600",
-    features: [
-      "Calculus",
-      "Algebra",
-      "Geometry",
-      "Trigonometry",
-      "Probability",
-    ],
-  },
-  {
-    title: "JEE Problem Solving Strategies",
-    description:
-      "Enhance your analytical skills and learn proven strategies to tackle challenging questions.",
-    icon: "🧠",
-    color: "from-orange-500 to-pink-600",
-    features: [
-      "Time Management",
-      "Question Analysis",
-      "Concept Application",
-      "Test Simulation",
-      "Strategy Optimization",
-    ],
-  },
-  {
-    title: "JEE Mock Tests & Analysis",
-    description:
-      "Simulate real exam conditions with mock tests and detailed performance analysis.",
-    icon: "📝",
-    color: "from-red-500 to-orange-600",
-    features: [
-      "Full-Length Tests",
-      "Performance Analysis",
-      "Weakness Identification",
-      "Solution Strategies",
-      "Time Optimization",
-    ],
-  },
-  {
-    title: "Engineering Entrance Exam Coaching",
-    description:
-      "A comprehensive course covering Physics, Chemistry, and Mathematics tailored for engineering exams.",
-    icon: "⚙️",
-    color: "from-cyan-500 to-blue-600",
-    features: [
-      "Integrated Subject Coaching",
-      "Problem-Solving Sessions",
-      "Exam Techniques",
-      "Previous Year Papers",
-      "Interactive Q&A",
-    ],
-  },
-];
+import { Link } from "react-router-dom";
+import { courses } from "../courses/courseData";
 
 const CourseCard = ({ course, index, setCursorVariant }) => {
   const ref = useRef(null);
@@ -120,9 +35,21 @@ const CourseCard = ({ course, index, setCursorVariant }) => {
     >
       <div className="bg-white rounded-xl shadow-lg overflow-hidden h-full transition-all duration-300 hover-lift">
         <div
-          className={`bg-gradient-to-r ${course.color} p-6 text-white relative overflow-hidden`}
+          className={`bg-gradient-to-r from-blue-500 to-indigo-600 p-6 text-white relative overflow-hidden`}
         >
-          <div className="text-4xl mb-2 relative z-10">{course.icon}</div>
+          <div className="text-4xl mb-2 relative z-10">
+            {course.category === "Web Development"
+              ? "💻"
+              : course.category === "Data Science"
+              ? "🤖"
+              : course.category === "UI/UX Design"
+              ? "🎨"
+              : course.category === "Cybersecurity"
+              ? "🔒"
+              : course.category === "Engineering"
+              ? "📊"
+              : "🩺"}
+          </div>
           <h3 className="text-xl font-bold relative z-10">{course.title}</h3>
           <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-10 -mt-10 transform transition-transform duration-500 group-hover:scale-150"></div>
           <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full -ml-6 -mb-6 transform transition-transform duration-500 group-hover:scale-150"></div>
@@ -134,7 +61,7 @@ const CourseCard = ({ course, index, setCursorVariant }) => {
               COURSE INCLUDES:
             </h4>
             <ul className="space-y-1">
-              {course.features.map((feature, idx) => (
+              {course.curriculum[0].lessons.slice(0, 4).map((feature, idx) => (
                 <li
                   key={idx}
                   className="flex items-center text-sm text-gray-600"
@@ -157,13 +84,31 @@ const CourseCard = ({ course, index, setCursorVariant }) => {
               ))}
             </ul>
           </div>
-          <motion.button
-            className={`w-full py-2 bg-gradient-to-r ${course.color} text-white rounded-md`}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <span className="text-gray-400 line-through text-sm mr-2">
+                {course.price}
+              </span>
+              <span className="text-blue-600 font-bold text-xl">
+                {course.discountedPrice}
+              </span>
+            </div>
+            <span
+              className={`px-2 py-1 rounded-full text-xs font-bold ${
+                course.status === "Live"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+              }`}
+            >
+              {course.status}
+            </span>
+          </div>
+          <Link
+            to={`/courses/${course.id}`}
+            className="w-full py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-md flex items-center justify-center hover:from-blue-700 hover:to-indigo-700 transition-all"
           >
             Learn More
-          </motion.button>
+          </Link>
         </div>
       </div>
     </motion.div>
@@ -180,6 +125,9 @@ const Courses = ({ setCursorVariant }) => {
       controls.start("visible");
     }
   }, [isInView, controls]);
+
+  // Display only the first 6 courses
+  const displayedCourses = courses.slice(0, 6);
 
   return (
     <section id="courses" className="py-20 bg-gray-50" ref={ref}>
@@ -200,15 +148,15 @@ const Courses = ({ setCursorVariant }) => {
             Explore Our Featured Courses
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Discover comprehensive courses designed to prepare you for the JEE
-            and other engineering entrance exams.
+            Discover high-quality courses designed to help you advance your
+            career and achieve your learning goals.
           </p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courses.map((course, index) => (
+          {displayedCourses.map((course, index) => (
             <CourseCard
-              key={index}
+              key={course.id}
               course={course}
               index={index}
               setCursorVariant={setCursorVariant}
@@ -229,18 +177,14 @@ const Courses = ({ setCursorVariant }) => {
           }}
           className="mt-12 text-center"
         >
-          <motion.button
-            className="px-8 py-3 bg-white border border-blue-600 text-blue-600 rounded-md shadow-sm hover:shadow-md transition-all"
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0 10px 25px rgba(59, 130, 246, 0.2)",
-            }}
-            whileTap={{ scale: 0.95 }}
+          <Link
+            to="/courses"
+            className="inline-block px-8 py-3 bg-white border border-blue-600 text-blue-600 rounded-md shadow-sm hover:shadow-md transition-all"
             onMouseEnter={() => setCursorVariant("hover")}
             onMouseLeave={() => setCursorVariant("default")}
           >
             View All Courses
-          </motion.button>
+          </Link>
         </motion.div>
       </div>
     </section>

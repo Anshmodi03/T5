@@ -128,8 +128,11 @@ router.post(
 router.post(
   "/verify-otp",
   [
-    check("email").isEmail().withMessage("Please provide a valid email."),
-    check("otp").notEmpty().withMessage("OTP is required."),
+    check("email")
+      .trim()
+      .isEmail()
+      .withMessage("Please provide a valid email."),
+    check("otp").trim().notEmpty().withMessage("OTP is required."),
   ],
   async (req, res) => {
     // Validate input
@@ -140,10 +143,13 @@ router.post(
         .json({ message: "Validation error", errors: errors.array() });
     }
 
+    // Destructure and trim the inputs
     const { email, otp } = req.body;
+    const trimmedEmail = email.trim();
+    const trimmedOtp = otp.trim();
 
     try {
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email: trimmedEmail });
       if (!user) {
         return res.status(400).json({ message: "User not found." });
       }
@@ -165,7 +171,7 @@ router.post(
       }
 
       // Verify OTP using authenticator
-      const isValid = authenticator.check(otp, user.otpSecret);
+      const isValid = authenticator.check(trimmedOtp, user.otpSecret);
       if (!isValid) {
         return res.status(400).json({ message: "Invalid OTP." });
       }
