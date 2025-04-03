@@ -25,7 +25,9 @@ const LoginForm = ({
       const data = await login({ email, password, userRole });
       if (data.token) {
         console.log("Login successful:", data);
-        // Optionally store token (e.g., in localStorage)
+        // Store token and user info in localStorage so Header can detect logged-in state
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
         onClose();
       } else {
         setError(data.message || "Login failed");

@@ -375,4 +375,11 @@ router.post(
   }
 );
 
+// NEW: Logout endpoint for users
+router.post("/logout", (req, res) => {
+  // For JWT, logout is handled on the client by discarding the token.
+  // If you store the token in cookies, you could clear the cookie here.
+  res.status(200).json({ message: "Logout successful." });
+});
+
 module.exports = router;

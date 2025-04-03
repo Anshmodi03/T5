@@ -1,394 +1,38 @@
 const courseCategories = [
   "All Categories",
-  "Web Development",
-  "Data Science",
-  "Mobile Development",
-  "UI/UX Design",
-  "Cybersecurity",
-  "Cloud Computing",
-  "Artificial Intelligence",
   "Engineering",
-  "Medical",
+  "Medical Sciences",
+  "School Education",
+  "Mathematics",
+  "Physics",
+  "Chemistry",
+  "Biology",
   "Computer Science",
+  "Language Arts",
 ];
 
 const courseLevels = ["All Levels", "Beginner", "Intermediate", "Advanced"];
 
+// Gradient styles for course cards
+const gradientStyles = [
+  "from-blue-600 to-indigo-600",
+  "from-purple-600 to-pink-600",
+  "from-teal-500 to-emerald-500",
+  "from-orange-500 to-red-500",
+  "from-cyan-500 to-blue-500",
+  "from-rose-500 to-purple-500",
+  "from-amber-500 to-orange-500",
+  "from-lime-500 to-green-500",
+  "from-indigo-500 to-violet-500",
+  "from-fuchsia-500 to-pink-500",
+];
+
 const courses = [
-  {
-    id: "full-stack-web-dev",
-    title: "Full Stack Web Development",
-    description:
-      "Master front-end and back-end development with hands-on projects.",
-    longDescription:
-      "This comprehensive course covers everything you need to become a professional full-stack web developer. From HTML, CSS, and JavaScript to React, Node.js, and MongoDB, you'll learn all the essential technologies used in modern web development. Through hands-on projects and real-world applications, you'll build a strong portfolio that showcases your skills to potential employers.",
-    category: "Web Development",
-    level: "Intermediate",
-    price: "$499",
-    discountedPrice: "$349",
-    duration: "24 weeks",
-    batchSize: "30 Students",
-    validity: "Lifetime Access",
-    status: "Live",
-    rating: 4.8,
-    studentsEnrolled: 12500,
-    image: "/placeholder.svg?height=300&width=500",
-    instructor: {
-      name: "Dr. Alakh Pandey",
-      image: "/placeholder.svg?height=100&width=100",
-      bio: "Expert in Web Development with 10+ years of teaching experience",
-      rating: 4.9,
-    },
-    curriculum: [
-      {
-        title: "Module 1: Front-End Fundamentals",
-        lessons: [
-          "HTML5 Semantic Elements",
-          "CSS3 Layouts and Flexbox",
-          "JavaScript ES6+ Features",
-          "Responsive Design Principles",
-        ],
-      },
-      {
-        title: "Module 2: React Framework",
-        lessons: [
-          "React Components and Props",
-          "State Management with Hooks",
-          "Context API and Redux",
-          "React Router for Navigation",
-        ],
-      },
-      {
-        title: "Module 3: Back-End Development",
-        lessons: [
-          "Node.js Fundamentals",
-          "Express.js Framework",
-          "RESTful API Design",
-          "Authentication and Authorization",
-        ],
-      },
-      {
-        title: "Module 4: Database Integration",
-        lessons: [
-          "MongoDB Basics",
-          "Mongoose ODM",
-          "SQL vs NoSQL",
-          "Database Design Patterns",
-        ],
-      },
-      {
-        title: "Module 5: Deployment and DevOps",
-        lessons: [
-          "Git Version Control",
-          "CI/CD Pipelines",
-          "Cloud Deployment (AWS/Heroku)",
-          "Performance Optimization",
-        ],
-      },
-    ],
-    features: [
-      "24/7 Doubt Support",
-      "Live Coding Sessions",
-      "Industry-Standard Projects",
-      "Job Placement Assistance",
-      "Certificate of Completion",
-    ],
-    testimonials: [
-      {
-        name: "Sarah Johnson",
-        image: "/placeholder.svg?height=50&width=50",
-        text: "This course completely transformed my career. I went from knowing basic HTML to building full-stack applications in just a few months!",
-        rating: 5,
-      },
-      {
-        name: "Michael Chen",
-        image: "/placeholder.svg?height=50&width=50",
-        text: "The instructor's teaching style made complex concepts easy to understand. The projects were challenging but extremely rewarding.",
-        rating: 4.5,
-      },
-    ],
-  },
-  {
-    id: "data-science-ai",
-    title: "Data Science & AI",
-    description: "Explore machine learning, Python, and AI-driven solutions.",
-    longDescription:
-      "Dive into the world of data science and artificial intelligence with this comprehensive course. You'll learn Python programming, data analysis, visualization techniques, machine learning algorithms, and deep learning frameworks. By the end of the course, you'll be able to build AI models that can analyze data, make predictions, and solve complex problems across various domains.",
-    category: "Data Science",
-    level: "Advanced",
-    price: "$599",
-    discountedPrice: "$449",
-    duration: "28 weeks",
-    batchSize: "25 Students",
-    validity: "Lifetime Access",
-    status: "Live",
-    rating: 4.9,
-    studentsEnrolled: 9800,
-    image: "/placeholder.svg?height=300&width=500",
-    instructor: {
-      name: "Prof. Vishal Kumar",
-      image: "/placeholder.svg?height=100&width=100",
-      bio: "AI researcher with publications in top journals and 8+ years of industry experience",
-      rating: 4.8,
-    },
-    curriculum: [
-      {
-        title: "Module 1: Python for Data Science",
-        lessons: [
-          "Python Fundamentals",
-          "NumPy and Pandas Libraries",
-          "Data Cleaning and Preprocessing",
-          "Exploratory Data Analysis",
-        ],
-      },
-      {
-        title: "Module 2: Data Visualization",
-        lessons: [
-          "Matplotlib and Seaborn",
-          "Interactive Visualizations with Plotly",
-          "Dashboard Creation with Dash",
-          "Storytelling with Data",
-        ],
-      },
-      {
-        title: "Module 3: Machine Learning",
-        lessons: [
-          "Supervised Learning Algorithms",
-          "Unsupervised Learning Techniques",
-          "Model Evaluation and Validation",
-          "Feature Engineering",
-        ],
-      },
-      {
-        title: "Module 4: Deep Learning",
-        lessons: [
-          "Neural Networks Fundamentals",
-          "TensorFlow and Keras",
-          "Convolutional Neural Networks",
-          "Recurrent Neural Networks",
-        ],
-      },
-      {
-        title: "Module 5: AI Applications",
-        lessons: [
-          "Natural Language Processing",
-          "Computer Vision",
-          "Reinforcement Learning",
-          "Deploying AI Models",
-        ],
-      },
-    ],
-    features: [
-      "GPU-Enabled Cloud Labs",
-      "Real-world Datasets",
-      "Kaggle Competition Participation",
-      "AI Research Paper Reviews",
-      "Industry Mentorship",
-    ],
-    testimonials: [
-      {
-        name: "David Wilson",
-        image: "/placeholder.svg?height=50&width=50",
-        text: "The hands-on approach to machine learning algorithms helped me understand the theory behind them. I'm now confidently building AI models for my company.",
-        rating: 5,
-      },
-      {
-        name: "Priya Sharma",
-        image: "/placeholder.svg?height=50&width=50",
-        text: "This course strikes the perfect balance between theory and practice. The projects are challenging and relevant to real-world problems.",
-        rating: 4.8,
-      },
-    ],
-  },
-  {
-    id: "ui-ux-design",
-    title: "UI/UX Design",
-    description:
-      "Learn design principles, prototyping, and user experience strategies.",
-    longDescription:
-      "Master the art and science of creating beautiful, user-friendly digital experiences. This course covers the entire UI/UX design process, from user research and wireframing to high-fidelity prototypes and usability testing. You'll learn industry-standard tools like Figma and Adobe XD while developing a deep understanding of design principles, color theory, typography, and information architecture.",
-    category: "UI/UX Design",
-    level: "Beginner",
-    price: "$399",
-    discountedPrice: "$299",
-    duration: "16 weeks",
-    batchSize: "20 Students",
-    validity: "Lifetime Access",
-    status: "Live",
-    rating: 4.7,
-    studentsEnrolled: 7500,
-    image: "/placeholder.svg?height=300&width=500",
-    instructor: {
-      name: "Emma Rodriguez",
-      image: "/placeholder.svg?height=100&width=100",
-      bio: "Senior UX Designer with experience at top tech companies and a passion for teaching",
-      rating: 4.9,
-    },
-    curriculum: [
-      {
-        title: "Module 1: Design Fundamentals",
-        lessons: [
-          "Design Principles and Elements",
-          "Color Theory and Psychology",
-          "Typography and Readability",
-          "Visual Hierarchy and Layout",
-        ],
-      },
-      {
-        title: "Module 2: User Research",
-        lessons: [
-          "User Personas and Scenarios",
-          "User Journey Mapping",
-          "Competitive Analysis",
-          "Usability Testing Methods",
-        ],
-      },
-      {
-        title: "Module 3: Wireframing and Prototyping",
-        lessons: [
-          "Low-Fidelity Wireframes",
-          "Interactive Prototyping",
-          "Information Architecture",
-          "Navigation Patterns",
-        ],
-      },
-      {
-        title: "Module 4: UI Design",
-        lessons: [
-          "Design Systems and Components",
-          "Responsive Design",
-          "Microinteractions and Animation",
-          "Accessibility in Design",
-        ],
-      },
-      {
-        title: "Module 5: Professional Practice",
-        lessons: [
-          "Design Handoff to Developers",
-          "Portfolio Development",
-          "Design Critique and Iteration",
-          "Design Ethics and Inclusivity",
-        ],
-      },
-    ],
-    features: [
-      "Figma and Adobe XD Licenses",
-      "Real Client Projects",
-      "Design Review Sessions",
-      "Portfolio Development",
-      "Design Community Access",
-    ],
-    testimonials: [
-      {
-        name: "Alex Thompson",
-        image: "/placeholder.svg?height=50&width=50",
-        text: "This course helped me transition from graphic design to UI/UX. The instructor's feedback on my projects was invaluable for my growth.",
-        rating: 5,
-      },
-      {
-        name: "Sophia Lee",
-        image: "/placeholder.svg?height=50&width=50",
-        text: "The practical approach to design challenges prepared me for real-world scenarios. I landed a UX design job before even finishing the course!",
-        rating: 4.5,
-      },
-    ],
-  },
-  {
-    id: "cybersecurity-fundamentals",
-    title: "Cybersecurity Fundamentals",
-    description: "Understand security principles and protect digital assets.",
-    longDescription:
-      "Develop the skills needed to protect organizations from cyber threats in this comprehensive cybersecurity course. You'll learn about network security, ethical hacking, cryptography, security auditing, and threat analysis. Through hands-on labs and simulated attacks, you'll gain practical experience in identifying vulnerabilities and implementing robust security measures to protect digital assets and sensitive information.",
-    category: "Cybersecurity",
-    level: "Intermediate",
-    price: "$549",
-    discountedPrice: "$399",
-    duration: "20 weeks",
-    batchSize: "25 Students",
-    validity: "Lifetime Access",
-    status: "Live",
-    rating: 4.8,
-    studentsEnrolled: 6200,
-    image: "/placeholder.svg?height=300&width=500",
-    instructor: {
-      name: "Robert Chen",
-      image: "/placeholder.svg?height=100&width=100",
-      bio: "Certified Ethical Hacker with 12+ years of experience in cybersecurity consulting",
-      rating: 4.7,
-    },
-    curriculum: [
-      {
-        title: "Module 1: Security Fundamentals",
-        lessons: [
-          "Introduction to Cybersecurity",
-          "Security Principles and Frameworks",
-          "Threat Landscape Overview",
-          "Security Governance and Compliance",
-        ],
-      },
-      {
-        title: "Module 2: Network Security",
-        lessons: [
-          "Network Architecture and Vulnerabilities",
-          "Firewalls and Intrusion Detection Systems",
-          "VPNs and Secure Communications",
-          "Wireless Network Security",
-        ],
-      },
-      {
-        title: "Module 3: Ethical Hacking",
-        lessons: [
-          "Reconnaissance Techniques",
-          "Vulnerability Assessment",
-          "Exploitation Fundamentals",
-          "Post-Exploitation and Pivoting",
-        ],
-      },
-      {
-        title: "Module 4: Security Operations",
-        lessons: [
-          "Security Monitoring and SIEM",
-          "Incident Response Procedures",
-          "Digital Forensics Basics",
-          "Threat Hunting Techniques",
-        ],
-      },
-      {
-        title: "Module 5: Application Security",
-        lessons: [
-          "Secure Coding Practices",
-          "Web Application Security",
-          "Mobile Security Considerations",
-          "DevSecOps Integration",
-        ],
-      },
-    ],
-    features: [
-      "Virtual Security Lab Environment",
-      "Capture-the-Flag Challenges",
-      "Security Tool Licenses",
-      "Industry Certification Preparation",
-      "Security Community Membership",
-    ],
-    testimonials: [
-      {
-        name: "James Wilson",
-        image: "/placeholder.svg?height=50&width=50",
-        text: "The hands-on labs were incredibly valuable. I was able to apply what I learned immediately in my IT role to improve our company's security posture.",
-        rating: 5,
-      },
-      {
-        name: "Aisha Patel",
-        image: "/placeholder.svg?height=50&width=50",
-        text: "This course provided a perfect balance of theory and practical skills. The instructor's real-world examples made complex security concepts easier to understand.",
-        rating: 4.5,
-      },
-    ],
-  },
   {
     id: "engineering-mathematics",
     title: "Engineering Mathematics",
-    description: "Master the mathematical concepts essential for engineering.",
+    description:
+      "Master the mathematical concepts essential for engineering applications.",
     longDescription:
       "Build a strong foundation in mathematics for engineering applications with this comprehensive course. You'll learn calculus, linear algebra, differential equations, statistics, and numerical methods, with a focus on practical applications in engineering fields. Through problem-solving exercises and computational tools, you'll develop the mathematical skills needed to tackle complex engineering challenges.",
     category: "Engineering",
@@ -402,6 +46,8 @@ const courses = [
     rating: 4.6,
     studentsEnrolled: 8300,
     image: "/placeholder.svg?height=300&width=500",
+    gradient: gradientStyles[0],
+    featured: true,
     instructor: {
       name: "Dr. Rahul Sharma",
       image: "/placeholder.svg?height=100&width=100",
@@ -478,23 +124,25 @@ const courses = [
     ],
   },
   {
-    id: "medical-sciences",
-    title: "Medical Sciences",
+    id: "medical-anatomy",
+    title: "Human Anatomy for Medical Students",
     description:
-      "Comprehensive courses for medical students and professionals.",
+      "Comprehensive study of human anatomy with 3D visualizations and clinical correlations.",
     longDescription:
-      "This comprehensive medical sciences course is designed for students preparing for medical entrance exams and healthcare professionals seeking to refresh their knowledge. Covering anatomy, physiology, biochemistry, pathology, and pharmacology, the course provides a solid foundation in medical sciences. Through detailed illustrations, 3D models, and clinical case studies, you'll develop a deep understanding of human body systems and disease mechanisms.",
-    category: "Medical",
+      "This detailed course covers the complete human anatomy with a focus on clinical applications. Using advanced 3D models, cadaveric images, and clinical case studies, you'll develop a thorough understanding of anatomical structures and their relationships. Perfect for medical students, the course emphasizes clinical correlations to help you apply anatomical knowledge to patient care scenarios.",
+    category: "Medical Sciences",
     level: "Advanced",
-    price: "$649",
-    discountedPrice: "$499",
-    duration: "32 weeks",
+    price: "$599",
+    discountedPrice: "$449",
+    duration: "24 weeks",
     batchSize: "30 Students",
     validity: "Lifetime Access",
     status: "Live",
     rating: 4.9,
-    studentsEnrolled: 5600,
+    studentsEnrolled: 6200,
     image: "/placeholder.svg?height=300&width=500",
+    gradient: gradientStyles[1],
+    featured: true,
     instructor: {
       name: "Dr. Priya Singh",
       image: "/placeholder.svg?height=100&width=100",
@@ -503,48 +151,48 @@ const courses = [
     },
     curriculum: [
       {
-        title: "Module 1: Human Anatomy",
+        title: "Module 1: Introduction to Human Anatomy",
         lessons: [
-          "Musculoskeletal System",
-          "Cardiovascular System",
-          "Respiratory System",
-          "Nervous System",
+          "Anatomical Terminology",
+          "Body Organization",
+          "Cells and Tissues",
+          "Organ Systems Overview",
         ],
       },
       {
-        title: "Module 2: Human Physiology",
+        title: "Module 2: Musculoskeletal System",
         lessons: [
-          "Cellular Physiology",
-          "Cardiovascular Physiology",
-          "Respiratory Physiology",
-          "Renal Physiology",
+          "Skeletal System",
+          "Joints and Articulations",
+          "Muscular System",
+          "Clinical Applications",
         ],
       },
       {
-        title: "Module 3: Biochemistry",
+        title: "Module 3: Cardiovascular and Respiratory Systems",
         lessons: [
-          "Protein Structure and Function",
-          "Enzymes and Metabolism",
-          "Molecular Biology",
-          "Nutrition and Vitamins",
+          "Heart Anatomy",
+          "Blood Vessels",
+          "Respiratory Tract",
+          "Clinical Correlations",
         ],
       },
       {
-        title: "Module 4: Pathology",
+        title: "Module 4: Neuroanatomy",
         lessons: [
-          "General Pathology",
-          "Cardiovascular Pathology",
-          "Respiratory Pathology",
-          "Neoplasia",
+          "Central Nervous System",
+          "Peripheral Nervous System",
+          "Special Senses",
+          "Clinical Neuroanatomy",
         ],
       },
       {
-        title: "Module 5: Pharmacology",
+        title: "Module 5: Abdominal and Pelvic Anatomy",
         lessons: [
-          "Pharmacokinetics and Pharmacodynamics",
-          "Autonomic Pharmacology",
-          "Cardiovascular Pharmacology",
-          "Antimicrobial Agents",
+          "Digestive System",
+          "Urinary System",
+          "Reproductive System",
+          "Clinical Case Studies",
         ],
       },
     ],
@@ -565,11 +213,766 @@ const courses = [
       {
         name: "Emily Johnson",
         image: "/placeholder.svg?height=50&width=50",
-        text: "Dr. Singh's explanations of complex physiological processes are exceptional. The course structure made it easy to progress through difficult concepts systematically.",
+        text: "Dr. Singh's explanations of complex anatomical relationships are exceptional. The course structure made it easy to progress through difficult concepts systematically.",
         rating: 4.8,
+      },
+    ],
+  },
+  {
+    id: "physics-high-school",
+    title: "High School Physics Mastery",
+    description:
+      "Build a strong foundation in physics concepts for high school students.",
+    longDescription:
+      "This course is designed to help high school students excel in physics. From mechanics to electricity and magnetism, you'll learn fundamental physics concepts through interactive simulations, problem-solving exercises, and real-world applications. The course aligns with AP Physics and IB Physics curricula, making it perfect for exam preparation while building a solid foundation for college-level physics.",
+    category: "School Education",
+    level: "Beginner",
+    price: "$249",
+    discountedPrice: "$179",
+    duration: "12 weeks",
+    batchSize: "40 Students",
+    validity: "Lifetime Access",
+    status: "Live",
+    rating: 4.7,
+    studentsEnrolled: 9500,
+    image: "/placeholder.svg?height=300&width=500",
+    gradient: gradientStyles[2],
+    featured: false,
+    instructor: {
+      name: "Prof. Michael Chen",
+      image: "/placeholder.svg?height=100&width=100",
+      bio: "Physics educator with 12+ years of experience teaching high school and AP Physics",
+      rating: 4.8,
+    },
+    curriculum: [
+      {
+        title: "Module 1: Mechanics",
+        lessons: [
+          "Kinematics",
+          "Newton's Laws of Motion",
+          "Work, Energy, and Power",
+          "Momentum and Collisions",
+        ],
+      },
+      {
+        title: "Module 2: Waves and Optics",
+        lessons: [
+          "Wave Properties",
+          "Sound Waves",
+          "Reflection and Refraction",
+          "Lenses and Mirrors",
+        ],
+      },
+      {
+        title: "Module 3: Electricity and Magnetism",
+        lessons: [
+          "Electric Charges and Fields",
+          "Electric Circuits",
+          "Magnetic Fields",
+          "Electromagnetic Induction",
+        ],
+      },
+      {
+        title: "Module 4: Thermodynamics",
+        lessons: [
+          "Temperature and Heat",
+          "Laws of Thermodynamics",
+          "Heat Transfer",
+          "Thermal Properties of Matter",
+        ],
+      },
+      {
+        title: "Module 5: Modern Physics",
+        lessons: [
+          "Special Relativity",
+          "Quantum Physics",
+          "Atomic Structure",
+          "Nuclear Physics",
+        ],
+      },
+    ],
+    features: [
+      "Interactive Physics Simulations",
+      "Problem-Solving Workshops",
+      "AP/IB Exam Preparation",
+      "Virtual Lab Experiments",
+      "Weekly Live Q&A Sessions",
+    ],
+    testimonials: [
+      {
+        name: "Alex Thompson",
+        image: "/placeholder.svg?height=50&width=50",
+        text: "This course helped me go from a C to an A in my high school physics class. The simulations made abstract concepts much easier to understand.",
+        rating: 5,
+      },
+      {
+        name: "Sophia Lee",
+        image: "/placeholder.svg?height=50&width=50",
+        text: "Professor Chen explains complex physics concepts in a way that's easy to understand. I scored a 5 on my AP Physics exam thanks to this course!",
+        rating: 4.5,
+      },
+    ],
+  },
+  {
+    id: "organic-chemistry",
+    title: "Organic Chemistry Fundamentals",
+    description:
+      "Master the principles of organic chemistry with practical applications.",
+    longDescription:
+      "This comprehensive organic chemistry course covers everything from basic concepts to advanced reaction mechanisms. Through interactive molecular modeling, virtual lab experiments, and problem-solving exercises, you'll develop a deep understanding of organic chemistry principles and their applications in medicine, materials science, and industry. The course is designed for college students and pre-med students preparing for MCAT.",
+    category: "Chemistry",
+    level: "Intermediate",
+    price: "$399",
+    discountedPrice: "$299",
+    duration: "20 weeks",
+    batchSize: "35 Students",
+    validity: "Lifetime Access",
+    status: "Live",
+    rating: 4.8,
+    studentsEnrolled: 7200,
+    image: "/placeholder.svg?height=300&width=500",
+    gradient: gradientStyles[3],
+    featured: false,
+    instructor: {
+      name: "Dr. Sarah Johnson",
+      image: "/placeholder.svg?height=100&width=100",
+      bio: "Organic chemistry professor with research experience in medicinal chemistry and drug design",
+      rating: 4.9,
+    },
+    curriculum: [
+      {
+        title: "Module 1: Structure and Bonding",
+        lessons: [
+          "Atomic Structure and Bonding",
+          "Molecular Orbital Theory",
+          "Hybridization",
+          "Resonance Structures",
+        ],
+      },
+      {
+        title: "Module 2: Functional Groups",
+        lessons: [
+          "Alkanes and Cycloalkanes",
+          "Alcohols and Ethers",
+          "Aldehydes and Ketones",
+          "Carboxylic Acids and Derivatives",
+        ],
+      },
+      {
+        title: "Module 3: Reaction Mechanisms",
+        lessons: [
+          "Nucleophilic Substitution",
+          "Elimination Reactions",
+          "Addition Reactions",
+          "Radical Reactions",
+        ],
+      },
+      {
+        title: "Module 4: Spectroscopy",
+        lessons: [
+          "IR Spectroscopy",
+          "NMR Spectroscopy",
+          "Mass Spectrometry",
+          "Structure Determination",
+        ],
+      },
+      {
+        title: "Module 5: Biomolecules",
+        lessons: [
+          "Carbohydrates",
+          "Amino Acids and Proteins",
+          "Lipids",
+          "Nucleic Acids",
+        ],
+      },
+    ],
+    features: [
+      "3D Molecular Modeling",
+      "Virtual Organic Chemistry Lab",
+      "MCAT Preparation Materials",
+      "Reaction Mechanism Animations",
+      "Problem-Solving Workshops",
+    ],
+    testimonials: [
+      {
+        name: "David Wilson",
+        image: "/placeholder.svg?height=50&width=50",
+        text: "Dr. Johnson's approach to teaching organic chemistry made a typically difficult subject much more approachable. The 3D models were especially helpful for visualizing molecular structures.",
+        rating: 5,
+      },
+      {
+        name: "Aisha Patel",
+        image: "/placeholder.svg?height=50&width=50",
+        text: "This course was instrumental in my MCAT preparation. The practice problems and explanations helped me master organic chemistry concepts that I had struggled with before.",
+        rating: 4.7,
+      },
+    ],
+  },
+  {
+    id: "computer-science-fundamentals",
+    title: "Computer Science Fundamentals",
+    description:
+      "Build a strong foundation in computer science principles and programming.",
+    longDescription:
+      "This course provides a comprehensive introduction to computer science fundamentals, covering algorithms, data structures, programming concepts, and computational thinking. Through hands-on coding exercises in Python and Java, you'll develop problem-solving skills and learn how to design efficient solutions to computational problems. Perfect for high school students, college freshmen, or anyone looking to enter the field of computer science.",
+    category: "Computer Science",
+    level: "Beginner",
+    price: "$349",
+    discountedPrice: "$249",
+    duration: "16 weeks",
+    batchSize: "40 Students",
+    validity: "Lifetime Access",
+    status: "Live",
+    rating: 4.7,
+    studentsEnrolled: 11200,
+    image: "/placeholder.svg?height=300&width=500",
+    gradient: gradientStyles[4],
+    featured: true,
+    instructor: {
+      name: "Prof. James Wilson",
+      image: "/placeholder.svg?height=100&width=100",
+      bio: "Computer Science professor with experience at leading tech companies and a passion for teaching",
+      rating: 4.8,
+    },
+    curriculum: [
+      {
+        title: "Module 1: Introduction to Programming",
+        lessons: [
+          "Programming Fundamentals",
+          "Variables and Data Types",
+          "Control Structures",
+          "Functions and Methods",
+        ],
+      },
+      {
+        title: "Module 2: Data Structures",
+        lessons: [
+          "Arrays and Lists",
+          "Stacks and Queues",
+          "Trees and Graphs",
+          "Hash Tables",
+        ],
+      },
+      {
+        title: "Module 3: Algorithms",
+        lessons: [
+          "Algorithm Analysis",
+          "Searching Algorithms",
+          "Sorting Algorithms",
+          "Graph Algorithms",
+        ],
+      },
+      {
+        title: "Module 4: Object-Oriented Programming",
+        lessons: [
+          "Classes and Objects",
+          "Inheritance and Polymorphism",
+          "Encapsulation and Abstraction",
+          "Design Patterns",
+        ],
+      },
+      {
+        title: "Module 5: Advanced Topics",
+        lessons: [
+          "Recursion",
+          "Dynamic Programming",
+          "Introduction to Databases",
+          "Web Development Basics",
+        ],
+      },
+    ],
+    features: [
+      "Interactive Coding Exercises",
+      "Algorithm Visualizations",
+      "Project-Based Learning",
+      "Competitive Programming Challenges",
+      "Career Guidance in Tech",
+    ],
+    testimonials: [
+      {
+        name: "Ryan Chen",
+        image: "/placeholder.svg?height=50&width=50",
+        text: "This course provided an excellent foundation in computer science. The programming exercises and projects helped me apply theoretical concepts to real-world problems.",
+        rating: 5,
+      },
+      {
+        name: "Maria Rodriguez",
+        image: "/placeholder.svg?height=50&width=50",
+        text: "Professor Wilson's teaching style made complex computer science concepts accessible. I went from knowing nothing about programming to building my own applications by the end of the course.",
+        rating: 4.6,
+      },
+    ],
+  },
+  {
+    id: "advanced-biology",
+    title: "Advanced Biology for Pre-Med Students",
+    description:
+      "Comprehensive biology course with a focus on medical applications.",
+    longDescription:
+      "This advanced biology course is designed specifically for pre-med students and those preparing for medical school. Covering cellular biology, genetics, physiology, and more, the course emphasizes clinical applications and MCAT preparation. Through virtual lab experiments, case studies, and interactive simulations, you'll develop a deep understanding of biological processes and their relevance to medicine.",
+    category: "Biology",
+    level: "Advanced",
+    price: "$499",
+    discountedPrice: "$379",
+    duration: "24 weeks",
+    batchSize: "30 Students",
+    validity: "Lifetime Access",
+    status: "Live",
+    rating: 4.8,
+    studentsEnrolled: 5800,
+    image: "/placeholder.svg?height=300&width=500",
+    gradient: gradientStyles[5],
+    featured: false,
+    instructor: {
+      name: "Dr. Elizabeth Chen",
+      image: "/placeholder.svg?height=100&width=100",
+      bio: "Molecular biologist with medical school teaching experience and research in cellular biology",
+      rating: 4.9,
+    },
+    curriculum: [
+      {
+        title: "Module 1: Cell Biology",
+        lessons: [
+          "Cell Structure and Function",
+          "Membrane Transport",
+          "Cellular Respiration",
+          "Cell Signaling",
+        ],
+      },
+      {
+        title: "Module 2: Genetics and Molecular Biology",
+        lessons: [
+          "DNA Structure and Replication",
+          "Gene Expression",
+          "Genetic Engineering",
+          "Genomics and Proteomics",
+        ],
+      },
+      {
+        title: "Module 3: Human Physiology",
+        lessons: [
+          "Nervous System",
+          "Endocrine System",
+          "Cardiovascular System",
+          "Immune System",
+        ],
+      },
+      {
+        title: "Module 4: Developmental Biology",
+        lessons: [
+          "Embryonic Development",
+          "Stem Cells",
+          "Tissue Differentiation",
+          "Aging and Regeneration",
+        ],
+      },
+      {
+        title: "Module 5: Medical Applications",
+        lessons: [
+          "Pathophysiology",
+          "Pharmacology Basics",
+          "Cancer Biology",
+          "Infectious Diseases",
+        ],
+      },
+    ],
+    features: [
+      "Virtual Biology Lab",
+      "MCAT Biology Preparation",
+      "Clinical Case Studies",
+      "3D Biological Visualizations",
+      "Research Paper Analysis",
+    ],
+    testimonials: [
+      {
+        name: "Jennifer Kim",
+        image: "/placeholder.svg?height=50&width=50",
+        text: "This course was exactly what I needed for MCAT preparation. The clinical applications helped me understand how biological concepts apply to medicine.",
+        rating: 5,
+      },
+      {
+        name: "Michael Patel",
+        image: "/placeholder.svg?height=50&width=50",
+        text: "Dr. Chen's expertise in both biology and medicine made this course exceptional. The virtual labs and case studies provided practical experience that complemented the theoretical knowledge.",
+        rating: 4.7,
+      },
+    ],
+  },
+  {
+    id: "elementary-mathematics",
+    title: "Elementary Mathematics Foundations",
+    description:
+      "Build strong math fundamentals for elementary school students.",
+    longDescription:
+      "This course is designed to help elementary school students build a strong foundation in mathematics. Through interactive lessons, games, and problem-solving activities, students will develop number sense, arithmetic skills, and basic geometric understanding. The course follows a progressive approach, ensuring that students master fundamental concepts before moving on to more advanced topics.",
+    category: "School Education",
+    level: "Beginner",
+    price: "$199",
+    discountedPrice: "$149",
+    duration: "12 weeks",
+    batchSize: "25 Students",
+    validity: "Lifetime Access",
+    status: "Live",
+    rating: 4.9,
+    studentsEnrolled: 12500,
+    image: "/placeholder.svg?height=300&width=500",
+    gradient: gradientStyles[6],
+    featured: false,
+    instructor: {
+      name: "Ms. Rebecca Taylor",
+      image: "/placeholder.svg?height=100&width=100",
+      bio: "Elementary education specialist with 15+ years of experience teaching mathematics to young learners",
+      rating: 4.9,
+    },
+    curriculum: [
+      {
+        title: "Module 1: Numbers and Counting",
+        lessons: [
+          "Number Recognition",
+          "Counting Principles",
+          "Place Value",
+          "Comparing Numbers",
+        ],
+      },
+      {
+        title: "Module 2: Addition and Subtraction",
+        lessons: [
+          "Basic Addition",
+          "Basic Subtraction",
+          "Word Problems",
+          "Mental Math Strategies",
+        ],
+      },
+      {
+        title: "Module 3: Multiplication and Division",
+        lessons: [
+          "Multiplication Concepts",
+          "Division Concepts",
+          "Times Tables",
+          "Word Problems",
+        ],
+      },
+      {
+        title: "Module 4: Fractions and Decimals",
+        lessons: [
+          "Introduction to Fractions",
+          "Equivalent Fractions",
+          "Decimal Concepts",
+          "Money Math",
+        ],
+      },
+      {
+        title: "Module 5: Geometry and Measurement",
+        lessons: [
+          "Shapes and Patterns",
+          "Perimeter and Area",
+          "Time and Calendar",
+          "Units of Measurement",
+        ],
+      },
+    ],
+    features: [
+      "Interactive Math Games",
+      "Printable Worksheets",
+      "Virtual Manipulatives",
+      "Progress Tracking for Parents",
+      "Adaptive Learning Path",
+    ],
+    testimonials: [
+      {
+        name: "Parent of Sam, 8",
+        image: "/placeholder.svg?height=50&width=50",
+        text: "My son used to struggle with math, but this course made it fun and engaging. The interactive games and visual explanations helped him understand concepts he had been struggling with.",
+        rating: 5,
+      },
+      {
+        name: "Parent of Mia, 9",
+        image: "/placeholder.svg?height=50&width=50",
+        text: "Ms. Taylor has a gift for teaching mathematics to children. My daughter looks forward to her math lessons now and has gained confidence in her abilities.",
+        rating: 5,
+      },
+    ],
+  },
+  {
+    id: "electrical-engineering",
+    title: "Electrical Engineering Principles",
+    description:
+      "Comprehensive introduction to electrical engineering concepts and applications.",
+    longDescription:
+      "This course provides a thorough introduction to electrical engineering principles and applications. From circuit analysis to digital systems, you'll learn fundamental concepts through theoretical explanations, interactive simulations, and practical projects. The course is designed for engineering students and professionals looking to strengthen their understanding of electrical engineering fundamentals.",
+    category: "Engineering",
+    level: "Intermediate",
+    price: "$449",
+    discountedPrice: "$349",
+    duration: "20 weeks",
+    batchSize: "35 Students",
+    validity: "Lifetime Access",
+    status: "Live",
+    rating: 4.7,
+    studentsEnrolled: 6800,
+    image: "/placeholder.svg?height=300&width=500",
+    gradient: gradientStyles[7],
+    featured: false,
+    instructor: {
+      name: "Prof. Robert Lee",
+      image: "/placeholder.svg?height=100&width=100",
+      bio: "Electrical engineering professor with industry experience in power systems and electronics design",
+      rating: 4.8,
+    },
+    curriculum: [
+      {
+        title: "Module 1: Circuit Analysis",
+        lessons: [
+          "DC Circuit Analysis",
+          "AC Circuit Analysis",
+          "Network Theorems",
+          "Transient Analysis",
+        ],
+      },
+      {
+        title: "Module 2: Electronics",
+        lessons: [
+          "Semiconductor Devices",
+          "Diodes and Applications",
+          "Transistors",
+          "Operational Amplifiers",
+        ],
+      },
+      {
+        title: "Module 3: Digital Systems",
+        lessons: [
+          "Boolean Algebra",
+          "Logic Gates",
+          "Sequential Circuits",
+          "Digital Design",
+        ],
+      },
+      {
+        title: "Module 4: Signals and Systems",
+        lessons: [
+          "Signal Representation",
+          "Fourier Analysis",
+          "Sampling and Modulation",
+          "Filter Design",
+        ],
+      },
+      {
+        title: "Module 5: Power Systems",
+        lessons: [
+          "Power Generation",
+          "Transmission and Distribution",
+          "Electrical Machines",
+          "Power Electronics",
+        ],
+      },
+    ],
+    features: [
+      "Circuit Simulation Software",
+      "Virtual Electronics Lab",
+      "Hands-on Projects",
+      "Industry Case Studies",
+      "Design Challenges",
+    ],
+    testimonials: [
+      {
+        name: "Thomas Zhang",
+        image: "/placeholder.svg?height=50&width=50",
+        text: "Professor Lee's explanations of complex electrical concepts are clear and practical. The simulation tools helped me visualize circuit behavior and deepen my understanding.",
+        rating: 4.5,
+      },
+      {
+        name: "Sophia Rodriguez",
+        image: "/placeholder.svg?height=50&width=50",
+        text: "This course provided an excellent foundation in electrical engineering. The hands-on projects were particularly valuable for applying theoretical knowledge to practical problems.",
+        rating: 5,
+      },
+    ],
+  },
+  {
+    id: "biochemistry-fundamentals",
+    title: "Biochemistry Fundamentals",
+    description:
+      "Explore the chemistry of living organisms and biological processes.",
+    longDescription:
+      "This comprehensive biochemistry course explores the chemical processes and substances that occur within living organisms. From protein structure to metabolism, you'll learn fundamental biochemical concepts and their applications in medicine, nutrition, and biotechnology. Through interactive molecular visualizations, virtual lab experiments, and case studies, you'll develop a deep understanding of how chemistry supports biological functions.",
+    category: "Medical Sciences",
+    level: "Advanced",
+    price: "$499",
+    discountedPrice: "$379",
+    duration: "20 weeks",
+    batchSize: "30 Students",
+    validity: "Lifetime Access",
+    status: "Live",
+    rating: 4.8,
+    studentsEnrolled: 5400,
+    image: "/placeholder.svg?height=300&width=500",
+    gradient: gradientStyles[8],
+    featured: false,
+    instructor: {
+      name: "Dr. Amanda Martinez",
+      image: "/placeholder.svg?height=100&width=100",
+      bio: "Biochemist with research experience in protein chemistry and enzyme kinetics",
+      rating: 4.9,
+    },
+    curriculum: [
+      {
+        title: "Module 1: Biomolecules",
+        lessons: [
+          "Amino Acids and Proteins",
+          "Carbohydrates",
+          "Lipids",
+          "Nucleic Acids",
+        ],
+      },
+      {
+        title: "Module 2: Protein Structure and Function",
+        lessons: [
+          "Protein Folding",
+          "Protein Function",
+          "Enzymes and Catalysis",
+          "Enzyme Kinetics",
+        ],
+      },
+      {
+        title: "Module 3: Metabolism",
+        lessons: [
+          "Glycolysis",
+          "Citric Acid Cycle",
+          "Oxidative Phosphorylation",
+          "Metabolic Integration",
+        ],
+      },
+      {
+        title: "Module 4: Molecular Biology",
+        lessons: [
+          "DNA Replication",
+          "Transcription",
+          "Translation",
+          "Gene Regulation",
+        ],
+      },
+      {
+        title: "Module 5: Biochemical Applications",
+        lessons: [
+          "Medical Biochemistry",
+          "Nutritional Biochemistry",
+          "Biotechnology",
+          "Research Methods",
+        ],
+      },
+    ],
+    features: [
+      "3D Molecular Visualizations",
+      "Virtual Biochemistry Lab",
+      "MCAT/NEET Preparation",
+      "Clinical Case Studies",
+      "Research Paper Analysis",
+    ],
+    testimonials: [
+      {
+        name: "Daniel Kim",
+        image: "/placeholder.svg?height=50&width=50",
+        text: "Dr. Martinez makes biochemistry accessible and engaging. The 3D visualizations helped me understand protein structures in a way textbooks never could.",
+        rating: 5,
+      },
+      {
+        name: "Priya Sharma",
+        image: "/placeholder.svg?height=50&width=50",
+        text: "This course was instrumental in my medical school preparation. The clinical applications helped me understand the relevance of biochemistry to medicine.",
+        rating: 4.7,
+      },
+    ],
+  },
+  {
+    id: "middle-school-language-arts",
+    title: "Middle School Language Arts",
+    description:
+      "Develop strong reading, writing, and communication skills for middle school students.",
+    longDescription:
+      "This comprehensive language arts course is designed specifically for middle school students. Covering reading comprehension, writing skills, grammar, vocabulary, and literature analysis, the course helps students develop strong communication abilities. Through interactive lessons, writing workshops, and guided reading activities, students will enhance their critical thinking and literacy skills while fostering a love for reading and effective communication.",
+    category: "Language Arts",
+    level: "Beginner",
+    price: "$249",
+    discountedPrice: "$179",
+    duration: "16 weeks",
+    batchSize: "25 Students",
+    validity: "Lifetime Access",
+    status: "Live",
+    rating: 4.8,
+    studentsEnrolled: 8700,
+    image: "/placeholder.svg?height=300&width=500",
+    gradient: gradientStyles[9],
+    featured: false,
+    instructor: {
+      name: "Ms. Jennifer Adams",
+      image: "/placeholder.svg?height=100&width=100",
+      bio: "Language arts specialist with 10+ years of experience teaching middle school English",
+      rating: 4.9,
+    },
+    curriculum: [
+      {
+        title: "Module 1: Reading Comprehension",
+        lessons: [
+          "Active Reading Strategies",
+          "Main Idea and Supporting Details",
+          "Making Inferences",
+          "Literary Elements",
+        ],
+      },
+      {
+        title: "Module 2: Writing Skills",
+        lessons: [
+          "The Writing Process",
+          "Narrative Writing",
+          "Expository Writing",
+          "Persuasive Writing",
+        ],
+      },
+      {
+        title: "Module 3: Grammar and Usage",
+        lessons: [
+          "Parts of Speech",
+          "Sentence Structure",
+          "Punctuation",
+          "Common Grammar Mistakes",
+        ],
+      },
+      {
+        title: "Module 4: Vocabulary Development",
+        lessons: [
+          "Word Analysis",
+          "Context Clues",
+          "Figurative Language",
+          "Word Relationships",
+        ],
+      },
+      {
+        title: "Module 5: Literature Study",
+        lessons: ["Short Stories", "Poetry", "Novels", "Literary Analysis"],
+      },
+    ],
+    features: [
+      "Interactive Reading Activities",
+      "Writing Workshops",
+      "Grammar Practice",
+      "Vocabulary Games",
+      "Literature Discussions",
+    ],
+    testimonials: [
+      {
+        name: "Parent of Emma, 12",
+        image: "/placeholder.svg?height=50&width=50",
+        text: "My daughter's writing and reading skills have improved dramatically since taking this course. Ms. Adams makes language arts engaging and fun.",
+        rating: 5,
+      },
+      {
+        name: "Parent of Jason, 13",
+        image: "/placeholder.svg?height=50&width=50",
+        text: "This course helped my son develop confidence in his communication skills. The interactive approach kept him motivated and interested.",
+        rating: 4.7,
       },
     ],
   },
 ];
 
-export { courses, courseCategories, courseLevels };
+export { courses, courseCategories, courseLevels, gradientStyles };

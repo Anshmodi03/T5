@@ -92,3 +92,25 @@ export async function resetPassword({ email, token, newPassword, userRole }) {
   });
   return response.json();
 }
+
+// New Logout function
+export async function logout() {
+  const csrfToken = await getCsrfToken();
+  const response = await fetch(`${API_BASE}/api/auth/logout`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRF-Token": csrfToken,
+    },
+    credentials: "include",
+  });
+
+  if (response.ok) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    return { message: "Logout successful" };
+  } else {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Logout failed");
+  }
+}

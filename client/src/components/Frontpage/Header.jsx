@@ -9,10 +9,12 @@ import {
   BookOpen,
   ChevronDown,
   ChevronRight,
+  LogOut,
 } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import T5Logo from "../../assets/T5.png";
 import AuthModal from "../auth/AuthModal";
+import { logout } from "../auth/authService";
 
 const Header = ({ setCursorVariant }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,11 +26,45 @@ const Header = ({ setCursorVariant }) => {
   const [userRole, setUserRole] = useState("student");
   const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
   const [showTeachersDropdown, setShowTeachersDropdown] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  const [textColorClass, setTextColorClass] = useState("text-white");
 
   const location = useLocation();
+  const navigate = useNavigate();
   const dropdownRef = useRef(null);
   const coursesDropdownRef = useRef(null);
   const teachersDropdownRef = useRef(null);
+  const headerRef = useRef(null);
+
+  // Check if user is logged in on component mount
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userData = localStorage.getItem("user");
+
+    if (token && userData) {
+      setIsLoggedIn(true);
+      setUser(JSON.parse(userData));
+    }
+  }, []);
+
+  // Dynamic text color based on background
+  useEffect(() => {
+    const updateTextColor = () => {
+      if (scrolled) {
+        setTextColorClass("text-gray-800");
+      } else {
+        // Check if we're at the hero section
+        if (location.pathname === "/" && activeSection === "home") {
+          setTextColorClass("text-white");
+        } else {
+          setTextColorClass("text-gray-800");
+        }
+      }
+    };
+
+    updateTextColor();
+  }, [scrolled, location.pathname, activeSection]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,6 +73,12 @@ const Header = ({ setCursorVariant }) => {
       // Determine active section based on scroll position
       const sections = document.querySelectorAll("section[id]");
       const scrollPosition = window.pageYOffset + 100;
+
+      // Always set home as active when at the top of the page
+      if (window.pageYOffset < 100 && location.pathname === "/") {
+        setActiveSection("home");
+        return;
+      }
 
       sections.forEach((section) => {
         const sectionTop = section.offsetTop;
@@ -52,32 +94,15 @@ const Header = ({ setCursorVariant }) => {
       });
     };
 
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowUserDropdown(false);
-      }
-      if (
-        coursesDropdownRef.current &&
-        !coursesDropdownRef.current.contains(event.target)
-      ) {
-        setShowCoursesDropdown(false);
-      }
-      if (
-        teachersDropdownRef.current &&
-        !teachersDropdownRef.current.contains(event.target)
-      ) {
-        setShowTeachersDropdown(false);
-      }
-    };
-
     window.addEventListener("scroll", handleScroll);
-    document.addEventListener("mousedown", handleClickOutside);
+
+    // Initial call to set active section
+    handleScroll();
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [location.pathname]);
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -129,6 +154,23 @@ const Header = ({ setCursorVariant }) => {
     setShowUserDropdown(false);
   };
 
+  // Logout handler: call logout API then clear local data regardless of API result.
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout API call failed:", error);
+    } finally {
+      // Clear client-side authentication data
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      setIsLoggedIn(false);
+      setUser(null);
+      setShowUserDropdown(false);
+      navigate("/");
+    }
+  };
+
   const dropdownVariants = {
     hidden: { opacity: 0, y: -5, scale: 0.95 },
     visible: {
@@ -168,9 +210,24 @@ const Header = ({ setCursorVariant }) => {
     },
   };
 
+  // Enhanced text gradient class with a subtler effect
+  const getTextGradientClass = () => {
+    if (scrolled) {
+      // When scrolled, use a darker indigo-blue-teal gradient
+      return "bg-gradient-to-r from-indigo-500 via-blue-500 to-teal-500 bg-clip-text text-transparent font-medium";
+    } else {
+      return location.pathname === "/" && activeSection === "home"
+        ? // On home page when not scrolled, use a lighter version of the gradient
+          "bg-gradient-to-r from-indigo-300 via-blue-300 to-teal-300 bg-clip-text text-transparent font-medium"
+        : // Otherwise, default to the darker gradient
+          "bg-gradient-to-r from-indigo-500 via-blue-500 to-teal-500 bg-clip-text text-transparent font-medium";
+    }
+  };
+
   return (
     <>
       <header
+        ref={headerRef}
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
           scrolled
             ? "py-2 bg-white/95 backdrop-blur-md shadow-md"
@@ -209,32 +266,46 @@ const Header = ({ setCursorVariant }) => {
                     ? teachersDropdownRef
                     : null
                 }
+                onMouseEnter={() => {
+                  if (item.name === "Courses") setShowCoursesDropdown(true);
+                  if (item.name === "Teachers") setShowTeachersDropdown(true);
+                }}
+                onMouseLeave={() => {
+                  if (item.name === "Courses") setShowCoursesDropdown(false);
+                  if (item.name === "Teachers") setShowTeachersDropdown(false);
+                }}
               >
                 {item.name === "Courses" ? (
                   <>
-                    <button
+                    <Link
+                      to="/courses"
                       className={`px-4 py-2 mx-1 rounded-md transition-all duration-300 flex items-center ${
                         location.pathname.includes("/courses")
-                          ? `${
-                              scrolled ? "text-black" : "text-white"
-                            } bg-teal-400`
-                          : `${
-                              scrolled ? "text-black" : "text-white"
-                            } hover:text-teal-400 hover:bg-teal-50/50`
+                          ? "bg-teal-400 text-white font-bold"
+                          : `hover:text-teal-400 hover:bg-teal-50/50 ${
+                              scrolled
+                                ? "text-gray-800 font-semibold"
+                                : `${textColorClass} font-semibold`
+                            }`
                       }`}
-                      onClick={() =>
-                        setShowCoursesDropdown(!showCoursesDropdown)
-                      }
                       onMouseEnter={() => setCursorVariant("hover")}
                       onMouseLeave={() => setCursorVariant("default")}
                     >
-                      <span className="relative">Courses</span>
+                      <span
+                        className={`relative ${
+                          location.pathname.includes("/courses")
+                            ? ""
+                            : getTextGradientClass()
+                        }`}
+                      >
+                        Courses
+                      </span>
                       <ChevronDown
                         className={`ml-1 h-4 w-4 transition-transform duration-300 ${
                           showCoursesDropdown ? "rotate-180" : ""
                         }`}
                       />
-                    </button>
+                    </Link>
 
                     <AnimatePresence>
                       {showCoursesDropdown && (
@@ -257,7 +328,7 @@ const Header = ({ setCursorVariant }) => {
                                       ? "/courses"
                                       : `/courses?category=${subItem}`
                                   }
-                                  className="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-600 transition-colors"
+                                  className="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-600 transition-colors font-medium"
                                   onClick={() => setShowCoursesDropdown(false)}
                                   onMouseEnter={() => setCursorVariant("hover")}
                                   onMouseLeave={() =>
@@ -276,29 +347,35 @@ const Header = ({ setCursorVariant }) => {
                   </>
                 ) : item.name === "Teachers" ? (
                   <>
-                    <button
+                    <Link
+                      to={item.link}
                       className={`px-4 py-2 mx-1 rounded-md transition-all duration-300 flex items-center ${
                         activeSection === item.link.substring(1)
-                          ? `${
-                              scrolled ? "text-black" : "text-white"
-                            } bg-teal-400`
-                          : `${
-                              scrolled ? "text-black" : "text-white"
-                            } hover:text-teal-400 hover:bg-teal-50/50`
+                          ? "bg-teal-400 text-white font-bold"
+                          : `hover:text-teal-400 hover:bg-teal-50/50 ${
+                              scrolled
+                                ? "text-gray-800 font-semibold"
+                                : `${textColorClass} font-semibold`
+                            }`
                       }`}
-                      onClick={() =>
-                        setShowTeachersDropdown(!showTeachersDropdown)
-                      }
                       onMouseEnter={() => setCursorVariant("hover")}
                       onMouseLeave={() => setCursorVariant("default")}
                     >
-                      <span className="relative">Teachers</span>
+                      <span
+                        className={`relative ${
+                          activeSection === item.link.substring(1)
+                            ? ""
+                            : getTextGradientClass()
+                        }`}
+                      >
+                        Teachers
+                      </span>
                       <ChevronDown
                         className={`ml-1 h-4 w-4 transition-transform duration-300 ${
                           showTeachersDropdown ? "rotate-180" : ""
                         }`}
                       />
-                    </button>
+                    </Link>
 
                     <AnimatePresence>
                       {showTeachersDropdown && (
@@ -317,7 +394,7 @@ const Header = ({ setCursorVariant }) => {
                               >
                                 <a
                                   href="#"
-                                  className="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-600 transition-colors"
+                                  className="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-600 transition-colors font-medium"
                                   onClick={() => setShowTeachersDropdown(false)}
                                   onMouseEnter={() => setCursorVariant("hover")}
                                   onMouseLeave={() =>
@@ -338,22 +415,36 @@ const Header = ({ setCursorVariant }) => {
                   <Link
                     to={item.link}
                     className={`px-4 py-2 mx-1 rounded-md transition-all duration-300 ${
-                      (item.link === "/" && location.pathname === "/") ||
+                      (item.link === "/" &&
+                        location.pathname === "/" &&
+                        activeSection === "home") ||
                       (item.link !== "/" &&
                         activeSection === item.link.substring(1))
-                        ? `${
-                            scrolled ? "text-black" : "text-white"
-                          } bg-teal-400`
-                        : `${
-                            scrolled ? "text-black" : "text-white"
-                          } hover:text-teal-400 hover:bg-teal-50/50`
+                        ? "bg-teal-400 text-white font-bold"
+                        : `hover:text-teal-400 hover:bg-teal-50/50 ${
+                            scrolled
+                              ? "text-gray-800 font-semibold"
+                              : `${textColorClass} font-semibold`
+                          }`
                     }`}
                     onMouseEnter={() => setCursorVariant("hover")}
                     onMouseLeave={() => setCursorVariant("default")}
                   >
-                    <span className="relative">
+                    <span
+                      className={`relative ${
+                        (item.link === "/" &&
+                          location.pathname === "/" &&
+                          activeSection === "home") ||
+                        (item.link !== "/" &&
+                          activeSection === item.link.substring(1))
+                          ? ""
+                          : getTextGradientClass()
+                      }`}
+                    >
                       {item.name}
-                      {((item.link === "/" && location.pathname === "/") ||
+                      {((item.link === "/" &&
+                        location.pathname === "/" &&
+                        activeSection === "home") ||
                         (item.link !== "/" &&
                           activeSection === item.link.substring(1))) && (
                         <motion.span
@@ -370,25 +461,47 @@ const Header = ({ setCursorVariant }) => {
 
           {/* User Account Dropdown */}
           <div className="hidden md:block relative" ref={dropdownRef}>
-            <motion.button
-              className="px-4 py-2 bg-gradient-to-r from-teal-400 to-indigo-400 text-white rounded-md hover:shadow-lg transition-all flex items-center gap-2"
-              whileHover={{
-                scale: 1.05,
-                boxShadow: "0 10px 25px rgba(59, 130, 246, 0.5)",
-              }}
-              whileTap={{ scale: 0.95 }}
-              onMouseEnter={() => setCursorVariant("hover")}
-              onMouseLeave={() => setCursorVariant("default")}
-              onClick={toggleUserDropdown}
-            >
-              <User className="h-4 w-4" />
-              Account
-              <ChevronDown
-                className={`h-4 w-4 transition-transform duration-200 ${
-                  showUserDropdown ? "rotate-180" : ""
-                }`}
-              />
-            </motion.button>
+            {isLoggedIn ? (
+              <motion.button
+                className="px-4 py-2 bg-gradient-to-r from-teal-400 to-indigo-400 text-white rounded-md hover:shadow-lg transition-all flex items-center gap-2 font-bold"
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 10px 25px rgba(59, 130, 246, 0.5)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                onMouseEnter={() => setCursorVariant("hover")}
+                onMouseLeave={() => setCursorVariant("default")}
+                onClick={toggleUserDropdown}
+              >
+                <User className="h-4 w-4" />
+                {user?.name || "User"}
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform duration-200 ${
+                    showUserDropdown ? "rotate-180" : ""
+                  }`}
+                />
+              </motion.button>
+            ) : (
+              <motion.button
+                className="px-4 py-2 bg-gradient-to-r from-teal-400 to-indigo-400 text-white rounded-md hover:shadow-lg transition-all flex items-center gap-2 font-bold"
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 10px 25px rgba(59, 130, 246, 0.5)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                onMouseEnter={() => setCursorVariant("hover")}
+                onMouseLeave={() => setCursorVariant("default")}
+                onClick={toggleUserDropdown}
+              >
+                <User className="h-4 w-4" />
+                Account
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform duration-200 ${
+                    showUserDropdown ? "rotate-180" : ""
+                  }`}
+                />
+              </motion.button>
+            )}
 
             <AnimatePresence>
               {showUserDropdown && (
@@ -399,33 +512,76 @@ const Header = ({ setCursorVariant }) => {
                   transition={{ duration: 0.2 }}
                   className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
                 >
-                  <div className="py-1">
-                    <div className="px-4 py-2 border-b border-gray-100">
-                      <p className="text-sm font-medium text-gray-900">
-                        Continue as
-                      </p>
+                  {isLoggedIn ? (
+                    <div className="py-1">
+                      <div className="px-4 py-2 border-b border-gray-100">
+                        <p className="text-sm font-medium text-gray-900">
+                          {user?.name || "User"}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {user?.email || ""}
+                        </p>
+                      </div>
+                      <Link
+                        to="/profile"
+                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-400 font-medium"
+                        onClick={() => setShowUserDropdown(false)}
+                        onMouseEnter={() => setCursorVariant("hover")}
+                        onMouseLeave={() => setCursorVariant("default")}
+                      >
+                        <User className="h-4 w-4 mr-2" />
+                        My Profile
+                      </Link>
+                      <Link
+                        to="/my-courses"
+                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-400 font-medium"
+                        onClick={() => setShowUserDropdown(false)}
+                        onMouseEnter={() => setCursorVariant("hover")}
+                        onMouseLeave={() => setCursorVariant("default")}
+                      >
+                        <BookOpen className="h-4 w-4 mr-2" />
+                        My Courses
+                      </Link>
+                      {/* Logout button */}
+                      <button
+                        className="flex items-center w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-400 font-medium"
+                        onClick={handleLogout}
+                        onMouseEnter={() => setCursorVariant("hover")}
+                        onMouseLeave={() => setCursorVariant("default")}
+                      >
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Logout
+                      </button>
                     </div>
-                    <a
-                      href="#"
-                      className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-400"
-                      onMouseEnter={() => setCursorVariant("hover")}
-                      onMouseLeave={() => setCursorVariant("default")}
-                      onClick={() => openAuthModal("login", "student")}
-                    >
-                      <User className="h-4 w-4 mr-2" />
-                      Student
-                    </a>
-                    <a
-                      href="#"
-                      className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-400"
-                      onMouseEnter={() => setCursorVariant("hover")}
-                      onMouseLeave={() => setCursorVariant("default")}
-                      onClick={() => openAuthModal("login", "teacher")}
-                    >
-                      <BookOpen className="h-4 w-4 mr-2" />
-                      Teacher
-                    </a>
-                  </div>
+                  ) : (
+                    <div className="py-1">
+                      <div className="px-4 py-2 border-b border-gray-100">
+                        <p className="text-sm font-medium text-gray-900">
+                          Continue as
+                        </p>
+                      </div>
+                      <a
+                        href="#"
+                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-400 font-medium"
+                        onMouseEnter={() => setCursorVariant("hover")}
+                        onMouseLeave={() => setCursorVariant("default")}
+                        onClick={() => openAuthModal("login", "student")}
+                      >
+                        <User className="h-4 w-4 mr-2" />
+                        Student
+                      </a>
+                      <a
+                        href="#"
+                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-400 font-medium"
+                        onMouseEnter={() => setCursorVariant("hover")}
+                        onMouseLeave={() => setCursorVariant("default")}
+                        onClick={() => openAuthModal("login", "teacher")}
+                      >
+                        <BookOpen className="h-4 w-4 mr-2" />
+                        Teacher
+                      </a>
+                    </div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -464,7 +620,7 @@ const Header = ({ setCursorVariant }) => {
                       <>
                         <Link
                           to="/courses"
-                          className={`block py-3 px-4 rounded-md text-lg font-medium ${
+                          className={`block py-3 px-4 rounded-md text-lg font-bold ${
                             location.pathname.includes("/courses")
                               ? "text-white bg-teal-400"
                               : "text-gray-700"
@@ -482,7 +638,7 @@ const Header = ({ setCursorVariant }) => {
                                   ? "/courses"
                                   : `/courses?category=${subItem}`
                               }
-                              className="block py-2 px-4 text-gray-500 hover:text-teal-500 rounded-md hover:bg-teal-50 transition-colors"
+                              className="block py-2 px-4 text-gray-500 hover:text-teal-500 rounded-md hover:bg-teal-50 transition-colors font-medium"
                               onClick={() => setIsMenuOpen(false)}
                             >
                               {subItem}
@@ -494,8 +650,10 @@ const Header = ({ setCursorVariant }) => {
                       <>
                         <Link
                           to={item.link}
-                          className={`block py-3 px-4 rounded-md text-lg font-medium ${
-                            (item.link === "/" && location.pathname === "/") ||
+                          className={`block py-3 px-4 rounded-md text-lg font-bold ${
+                            (item.link === "/" &&
+                              location.pathname === "/" &&
+                              activeSection === "home") ||
                             (item.link !== "/" &&
                               activeSection === item.link.substring(1))
                               ? "text-white bg-teal-400"
@@ -505,14 +663,13 @@ const Header = ({ setCursorVariant }) => {
                         >
                           {item.name}
                         </Link>
-
                         {item.dropdown && (
                           <div className="ml-4 mt-2 space-y-2">
                             {item.dropdown.map((subItem, subIndex) => (
                               <a
                                 key={subIndex}
                                 href="#"
-                                className="block py-2 px-4 text-gray-500 hover:text-teal-500 rounded-md hover:bg-teal-50 transition-colors"
+                                className="block py-2 px-4 text-gray-500 hover:text-teal-500 rounded-md hover:bg-teal-50 transition-colors font-medium"
                                 onClick={() => setIsMenuOpen(false)}
                               >
                                 {subItem}
@@ -526,33 +683,74 @@ const Header = ({ setCursorVariant }) => {
                 ))}
 
                 <div className="mt-6 space-y-4">
-                  <div className="px-4 py-2">
-                    <p className="text-lg font-medium text-gray-900">
-                      Continue as
-                    </p>
-                  </div>
-                  <a
-                    href="#"
-                    className="flex items-center py-3 px-4 text-gray-700 hover:text-teal-400 rounded-md hover:bg-teal-50"
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      openAuthModal("login", "student");
-                    }}
-                  >
-                    <User className="h-5 w-5 mr-2" />
-                    Student
-                  </a>
-                  <a
-                    href="#"
-                    className="flex items-center py-3 px-4 text-gray-700 hover:text-teal-400 rounded-md hover:bg-teal-50"
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      openAuthModal("login", "teacher");
-                    }}
-                  >
-                    <BookOpen className="h-5 w-5 mr-2" />
-                    Teacher
-                  </a>
+                  {isLoggedIn ? (
+                    <>
+                      <div className="px-4 py-2 border-b border-gray-200">
+                        <p className="text-lg font-bold text-gray-900">
+                          {user?.name || "User"}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {user?.email || ""}
+                        </p>
+                      </div>
+                      <Link
+                        to="/profile"
+                        className="flex items-center py-3 px-4 text-gray-700 hover:text-teal-400 rounded-md hover:bg-teal-50 font-medium"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <User className="h-5 w-5 mr-2" />
+                        My Profile
+                      </Link>
+                      <Link
+                        to="/my-courses"
+                        className="flex items-center py-3 px-4 text-gray-700 hover:text-teal-400 rounded-md hover:bg-teal-50 font-medium"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <BookOpen className="h-5 w-5 mr-2" />
+                        My Courses
+                      </Link>
+                      <button
+                        className="flex items-center w-full text-left py-3 px-4 text-gray-700 hover:text-teal-400 rounded-md hover:bg-teal-50 font-medium"
+                        onClick={() => {
+                          handleLogout();
+                          setIsMenuOpen(false);
+                        }}
+                      >
+                        <LogOut className="h-5 w-5 mr-2" />
+                        Logout
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="px-4 py-2">
+                        <p className="text-lg font-bold text-gray-900">
+                          Continue as
+                        </p>
+                      </div>
+                      <a
+                        href="#"
+                        className="flex items-center py-3 px-4 text-gray-700 hover:text-teal-400 rounded-md hover:bg-teal-50 font-medium"
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          openAuthModal("login", "student");
+                        }}
+                      >
+                        <User className="h-5 w-5 mr-2" />
+                        Student
+                      </a>
+                      <a
+                        href="#"
+                        className="flex items-center py-3 px-4 text-gray-700 hover:text-teal-400 rounded-md hover:bg-teal-50 font-medium"
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          openAuthModal("login", "teacher");
+                        }}
+                      >
+                        <BookOpen className="h-5 w-5 mr-2" />
+                        Teacher
+                      </a>
+                    </>
+                  )}
                 </div>
               </div>
             </motion.div>
