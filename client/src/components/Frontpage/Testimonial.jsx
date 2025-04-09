@@ -67,7 +67,7 @@ const TestimonialCard = ({ testimonial, setCursorVariant }) => {
       onMouseEnter={() => setCursorVariant("hover")}
       onMouseLeave={() => setCursorVariant("default")}
     >
-      <div className="mb-6 text-purple-600">
+      <div className="mb-6 text-black">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="40"
@@ -167,7 +167,7 @@ const Testimonials = ({ setCursorVariant }) => {
           }}
           className="text-center mb-12"
         >
-          <span className="inline-block px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold mb-4">
+          <span className="inline-block px-3 py-1 bg-gray-300 text-black rounded-full text-sm font-semibold mb-4">
             TESTIMONIALS
           </span>
           <h2 className="text-3xl md:text-4xl font-bold mb-4 gradient-text secondary-gradient">
@@ -189,7 +189,7 @@ const Testimonials = ({ setCursorVariant }) => {
           </AnimatePresence>
 
           <motion.button
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-purple-600 z-10"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-black z-10"
             onClick={prevTestimonial}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -212,7 +212,7 @@ const Testimonials = ({ setCursorVariant }) => {
           </motion.button>
 
           <motion.button
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-purple-600 z-10"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-black z-10"
             onClick={nextTestimonial}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -244,9 +244,7 @@ const Testimonials = ({ setCursorVariant }) => {
                 setCurrentTestimonial(index);
               }}
               className={`w-3 h-3 mx-1 rounded-full transition-all ${
-                index === currentTestimonial
-                  ? "bg-purple-600 w-6"
-                  : "bg-purple-300"
+                index === currentTestimonial ? "bg-black w-6" : "bg-gray-400"
               }`}
               onMouseEnter={() => setCursorVariant("hover")}
               onMouseLeave={() => setCursorVariant("default")}
