@@ -41,7 +41,7 @@ const faqs = [
   },
 ];
 
-const FAQ = ({ setCursorVariant }) => {
+const FAQ = () => {
   const [activeIndex, setActiveIndex] = useState(null);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
@@ -57,9 +57,59 @@ const FAQ = ({ setCursorVariant }) => {
     setActiveIndex(activeIndex === index ? null : index);
   };
 
+  // Background patterns with monochrome theme
+  const BackgroundElements = () => (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Background geometric shapes */}
+      {[...Array(10)].map((_, i) => {
+        const isCircle = Math.random() > 0.6;
+        return (
+          <motion.div
+            key={i}
+            className={`absolute ${
+              isCircle ? "rounded-full" : "rounded"
+            } bg-black/[0.02] dark:bg-white/[0.02]`}
+            style={{
+              width: `${Math.random() * 150 + 20}px`,
+              height: isCircle
+                ? `${Math.random() * 150 + 20}px`
+                : `${Math.random() * 80 + 20}px`,
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              transform: !isCircle ? `rotate(${Math.random() * 45}deg)` : "",
+            }}
+            animate={{
+              y: [0, -15, 0],
+              x: [0, Math.random() * 10 - 5, 0],
+              opacity: [0.2, 0.3, 0.2],
+              scale: [1, 1.05, 1],
+            }}
+            transition={{
+              duration: 8 + Math.random() * 12,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: Math.random() * 5,
+            }}
+          />
+        );
+      })}
+
+      {/* Grid lines for depth */}
+      <div
+        className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA2MCAwIEwgMCAwIDAgNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iMC4yIiBzdHJva2Utb3BhY2l0eT0iMC4wMiIgLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiIC8+PC9zdmc+')]
+           dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA2MCAwIEwgMCAwIDAgNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMC4yIiBzdHJva2Utb3BhY2l0eT0iMC4wMiIgLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiIC8+PC9zdmc+')]"
+      />
+    </div>
+  );
+
   return (
-    <section id="faq" className="py-20 bg-gray-50" ref={ref}>
-      <div className="container mx-auto px-4">
+    <section
+      id="faq"
+      className="py-20 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden"
+      ref={ref}
+    >
+      <BackgroundElements />
+      <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial="hidden"
           animate={controls}
@@ -69,13 +119,21 @@ const FAQ = ({ setCursorVariant }) => {
           }}
           className="text-center mb-12"
         >
-          <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold mb-4">
-            FAQ
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 gradient-text primary-gradient">
-            Frequently Asked Questions
+          <motion.span
+            className="inline-block px-3 py-1 bg-black/10 dark:bg-white/10 text-black dark:text-white rounded-full text-xs font-semibold uppercase tracking-wide mb-4 cursor-pointer"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 400 }}
+          >
+            FREQUENTLY ASKED QUESTIONS
+          </motion.span>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+            Got{" "}
+            <span className="text-black dark:text-white underline underline-offset-4 decoration-2">
+              Questions?
+            </span>{" "}
+            We Have Answers
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             Find answers to common questions about our platform and courses
           </p>
         </motion.div>
@@ -92,21 +150,20 @@ const FAQ = ({ setCursorVariant }) => {
           {faqs.map((faq, index) => (
             <motion.div
               key={index}
-              className="mb-4 bg-white rounded-lg shadow-md overflow-hidden"
+              className="mb-4 bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-100 dark:border-gray-700"
               initial={{ opacity: 0, y: 20 }}
               animate={{
                 opacity: 1,
                 y: 0,
                 transition: { delay: index * 0.1, duration: 0.5 },
               }}
-              onMouseEnter={() => setCursorVariant("hover")}
-              onMouseLeave={() => setCursorVariant("default")}
+              whileHover={{ scale: 1.01 }}
             >
               <button
-                className="w-full p-4 text-left flex justify-between items-center focus:outline-none"
+                className="w-full p-4 text-left flex justify-between items-center focus:outline-none cursor-pointer"
                 onClick={() => toggleFAQ(index)}
               >
-                <span className="font-medium text-gray-800">
+                <span className="font-medium text-gray-800 dark:text-white">
                   {faq.question}
                 </span>
                 <motion.div
@@ -114,7 +171,7 @@ const FAQ = ({ setCursorVariant }) => {
                   transition={{ duration: 0.3 }}
                 >
                   <svg
-                    className="w-5 h-5 text-gray-500"
+                    className="w-5 h-5 text-gray-500 dark:text-gray-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -136,8 +193,10 @@ const FAQ = ({ setCursorVariant }) => {
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <div className="p-4 pt-0 border-t border-gray-200">
-                      <p className="text-gray-600">{faq.answer}</p>
+                    <div className="p-4 pt-0 border-t border-gray-200 dark:border-gray-700">
+                      <p className="text-gray-600 dark:text-gray-300">
+                        {faq.answer}
+                      </p>
                     </div>
                   </motion.div>
                 )}
@@ -159,18 +218,34 @@ const FAQ = ({ setCursorVariant }) => {
           }}
           className="mt-12 text-center"
         >
-          <p className="text-gray-600 mb-4">Still have questions?</p>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">
+            Still have questions?
+          </p>
           <motion.button
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-md shadow-md"
+            className="px-6 py-3 bg-black dark:bg-white text-white dark:text-black rounded-md shadow-md cursor-pointer"
             whileHover={{
               scale: 1.05,
-              boxShadow: "0 10px 25px rgba(59, 130, 246, 0.4)",
+              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)",
             }}
             whileTap={{ scale: 0.95 }}
-            onMouseEnter={() => setCursorVariant("hover")}
-            onMouseLeave={() => setCursorVariant("default")}
           >
-            Contact Support
+            <span className="flex items-center justify-center">
+              <svg
+                className="w-4 h-4 mr-1.5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                />
+              </svg>
+              Contact Support
+            </span>
           </motion.button>
         </motion.div>
       </div>

@@ -169,23 +169,20 @@ const Footer = ({ setCursorVariant }) => {
           <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
         </svg>
       ),
-      text: "support@T5.com",
+      text: "T5-ssupport@gmail.com",
     },
   ];
 
   return (
-    <footer className="bg-gray-900 text-gray-300">
+    <footer className="bg-black text-white">
       <div className="container mx-auto py-12 px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* About */}
           <div>
             <h3 className="text-xl font-bold text-white mb-4 flex items-center">
-              <img
-                src="/T5.png" // Replace this with your logo path
-                alt="T5 Logo"
-                className="w-10 h-10 rounded-md bg-gradient-to-br from-blue-600 to-purple-600 mr-2"
-              />
-              T5
+              <span className="text-2xl font-bold bg-white rounded-md text-black tracking-tight">
+                <img src="/T5-Logo.png" alt="T5" className="h-13 w-auto" />
+              </span>
             </h3>
             <p className="mb-4">
               Providing high-quality education to help students achieve their
@@ -196,8 +193,8 @@ const Footer = ({ setCursorVariant }) => {
                 <motion.a
                   key={index}
                   href={link.url}
-                  className={`transition-colors ${link.hoverColor}`}
-                  whileHover={{ scale: 1.2 }}
+                  className={`transition-colors text-white hover:text-gray-300`}
+                  whileHover={{ scale: 1.2, cursor: "pointer" }}
                   whileTap={{ scale: 0.9 }}
                   onMouseEnter={() => setCursorVariant("hover")}
                   onMouseLeave={() => setCursorVariant("default")}
@@ -214,14 +211,17 @@ const Footer = ({ setCursorVariant }) => {
             <div key={index}>
               <h3 className="text-xl font-bold text-white mb-4">{title}</h3>
               <ul className="space-y-2">
-                {links.map((link, index) => (
-                  <li key={index}>
-                    <a
+                {links.map((link, linkIndex) => (
+                  <li key={linkIndex}>
+                    <motion.a
                       href={link.url}
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="hover:text-white transition-colors inline-block"
+                      whileHover={{ x: 5 }}
+                      onMouseEnter={() => setCursorVariant("hover")}
+                      onMouseLeave={() => setCursorVariant("default")}
                     >
                       {link.name}
-                    </a>
+                    </motion.a>
                   </li>
                 ))}
               </ul>
@@ -231,21 +231,31 @@ const Footer = ({ setCursorVariant }) => {
           {/* Contact */}
           <div>
             <h3 className="text-xl font-bold text-white mb-4">Contact Us</h3>
-            <ul className="space-y-2">
-              {contactInfo.map((item, index) => (
-                <li key={index} className="flex items-center">
-                  {item.icon}
-                  <span>{item.text}</span>
+            <ul className="space-y-4">
+              {contactInfo.map((info, index) => (
+                <li key={index} className="flex items-start">
+                  {info.icon}
+                  <span>{info.text}</span>
                 </li>
               ))}
             </ul>
+            <motion.button
+              className="mt-6 px-4 py-2 bg-white text-black border border-white rounded-md cursor-pointer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onMouseEnter={() => setCursorVariant("hover")}
+              onMouseLeave={() => setCursorVariant("default")}
+            >
+              Get in Touch
+            </motion.button>
           </div>
         </div>
+      </div>
 
-        <div className="text-center mt-12">
-          <p className="text-sm text-gray-400">
-            &copy; {currentYear} T5. All rights reserved.
-          </p>
+      {/* Copyright */}
+      <div className="border-t border-gray-800 py-6">
+        <div className="container mx-auto px-4 text-center text-sm">
+          <p>© {currentYear} T5 Portal. All Rights Reserved.</p>
         </div>
       </div>
     </footer>

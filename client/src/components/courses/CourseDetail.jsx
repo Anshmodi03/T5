@@ -189,7 +189,9 @@ const CourseDetail = ({ setCursorVariant }) => {
         </AnimatePresence>
 
         {/* Course Header */}
-        <div className={`bg-gradient-to-r ${course.gradient} text-white py-12`}>
+        <div
+          className={`bg-gradient-to-r from-black to-gray-800 text-white py-12`}
+        >
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -216,7 +218,7 @@ const CourseDetail = ({ setCursorVariant }) => {
                       {course.level}
                     </span>
                     {course.featured && (
-                      <span className="bg-yellow-400/80 text-white text-xs px-3 py-1 rounded-full flex items-center">
+                      <span className="bg-white/20 text-white text-xs px-3 py-1 rounded-full flex items-center">
                         <Sparkles className="h-3 w-3 mr-1" />
                         Featured
                       </span>
@@ -311,28 +313,32 @@ const CourseDetail = ({ setCursorVariant }) => {
                       <span className="text-white text-3xl font-bold ml-2">
                         {course.discountedPrice}
                       </span>
-                      <span className="ml-2 bg-green-500/80 text-white text-xs px-2 py-1 rounded-full">
+                      <span className="ml-2 bg-white text-black text-xs px-2 py-1 rounded-full">
                         {Math.round(
                           (1 -
-                            Number(course.discountedPrice.replace("$", "")) /
-                              Number(course.price.replace("$", ""))) *
+                            Number(
+                              course.discountedPrice
+                                .replace("₹", "")
+                                .replace(",", "")
+                            ) /
+                              Number(
+                                course.price.replace("₹", "").replace(",", "")
+                              )) *
                             100
                         )}
                         % OFF
                       </span>
                     </div>
                     <motion.button
-                      className="w-full py-3 px-6 bg-white text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 border-2 border-white rounded-md font-bold text-lg mb-3 hover:bg-opacity-90 transition-colors flex items-center justify-center"
-                      whileHover={{ scale: 1.03 }}
+                      className="w-full py-3 px-6 bg-black text-white border border-white rounded-md font-bold text-lg mb-3 hover:bg-opacity-90 transition-colors flex items-center justify-center"
+                      whileHover={{ scale: 1.03, cursor: "pointer" }}
                       whileTap={{ scale: 0.98 }}
                       onMouseEnter={() => setCursorVariant("hover")}
                       onMouseLeave={() => setCursorVariant("default")}
                       onClick={handleEnrollNow}
                     >
-                      <ShoppingCart className="h-5 w-5 mr-2 text-blue-600" />
-                      <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                        Enroll Now
-                      </span>
+                      <ShoppingCart className="h-5 w-5 mr-2 text-white" />
+                      <span>Enroll Now</span>
                     </motion.button>
                     <p className="text-white/70 text-sm">
                       30-Day Money-Back Guarantee
@@ -343,7 +349,7 @@ const CourseDetail = ({ setCursorVariant }) => {
                         className={`flex items-center text-white/80 hover:text-white transition-colors ${
                           isWishlisted ? "text-red-300" : ""
                         }`}
-                        whileHover={{ scale: 1.1 }}
+                        whileHover={{ scale: 1.1, cursor: "pointer" }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => setIsWishlisted(!isWishlisted)}
                         onMouseEnter={() => setCursorVariant("hover")}
@@ -361,7 +367,7 @@ const CourseDetail = ({ setCursorVariant }) => {
                         className={`flex items-center text-white/80 hover:text-white transition-colors ${
                           isBookmarked ? "text-yellow-300" : ""
                         }`}
-                        whileHover={{ scale: 1.1 }}
+                        whileHover={{ scale: 1.1, cursor: "pointer" }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => setIsBookmarked(!isBookmarked)}
                         onMouseEnter={() => setCursorVariant("hover")}
@@ -378,7 +384,7 @@ const CourseDetail = ({ setCursorVariant }) => {
                       <div className="relative">
                         <motion.button
                           className="flex items-center text-white/80 hover:text-white transition-colors"
-                          whileHover={{ scale: 1.1 }}
+                          whileHover={{ scale: 1.1, cursor: "pointer" }}
                           whileTap={{ scale: 0.9 }}
                           onClick={() => setShowShareOptions(!showShareOptions)}
                           onMouseEnter={() => setCursorVariant("hover")}
@@ -397,7 +403,7 @@ const CourseDetail = ({ setCursorVariant }) => {
                               exit={{ opacity: 0, y: 10, scale: 0.95 }}
                               transition={{ duration: 0.2 }}
                             >
-                              <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 rounded-md transition-colors flex items-center">
+                              <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors flex items-center cursor-pointer">
                                 <svg
                                   className="w-4 h-4 mr-2 text-blue-600"
                                   fill="currentColor"
@@ -407,7 +413,7 @@ const CourseDetail = ({ setCursorVariant }) => {
                                 </svg>
                                 Facebook
                               </button>
-                              <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 rounded-md transition-colors flex items-center">
+                              <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors flex items-center cursor-pointer">
                                 <svg
                                   className="w-4 h-4 mr-2 text-blue-400"
                                   fill="currentColor"
@@ -417,7 +423,7 @@ const CourseDetail = ({ setCursorVariant }) => {
                                 </svg>
                                 Twitter
                               </button>
-                              <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 rounded-md transition-colors flex items-center">
+                              <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors flex items-center cursor-pointer">
                                 <svg
                                   className="w-4 h-4 mr-2 text-blue-500"
                                   fill="currentColor"
@@ -440,7 +446,7 @@ const CourseDetail = ({ setCursorVariant }) => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.7, duration: 0.5 }}
                   >
-                    <Gift className="h-6 w-6 text-yellow-300 mr-3" />
+                    <Gift className="h-6 w-6 text-white mr-3" />
                     <div className="text-left">
                       <p className="font-medium">Gift this course</p>
                       <p className="text-sm text-white/70">
@@ -454,25 +460,19 @@ const CourseDetail = ({ setCursorVariant }) => {
           </div>
         </div>
 
+        <div className="w-full overflow-hidden mb-8">
+          <img
+            src="/coursedetailbanner.png"
+            alt="Course Detail Banner"
+            className="w-full h-auto object-cover max-h-[300px]"
+          />
+        </div>
+
         {/* Course Content */}
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Main Content */}
             <div className="lg:w-2/3">
-              {/* Course Image */}
-              <motion.div
-                className="bg-white rounded-xl shadow-md mb-8 overflow-hidden"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <img
-                  src={course.image || "/placeholder.svg"}
-                  alt={course.title}
-                  className="w-full h-64 object-cover"
-                />
-              </motion.div>
-
               {/* Tabs */}
               <motion.div
                 className="bg-white rounded-xl shadow-md mb-8 overflow-hidden"
@@ -686,7 +686,7 @@ const CourseDetail = ({ setCursorVariant }) => {
 
                         <div className="flex flex-col md:flex-row items-start gap-6 mb-6">
                           <motion.img
-                            src={course.instructor.image}
+                            src={course.instructor.image || "/placeholder.svg"}
                             alt={course.instructor.name}
                             className="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
                             initial={{ opacity: 0, scale: 0.8 }}
@@ -1028,8 +1028,8 @@ const CourseDetail = ({ setCursorVariant }) => {
 
                   <div className="flex gap-2">
                     <motion.button
-                      className="flex-1 py-2 px-4 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors flex items-center justify-center"
-                      whileHover={{ scale: 1.03 }}
+                      className="flex-1 py-2 px-4 border border-black text-white bg-black rounded-md font-medium hover:bg-opacity-80 transition-colors flex items-center justify-center"
+                      whileHover={{ scale: 1.03, cursor: "pointer" }}
                       whileTap={{ scale: 0.98 }}
                       onMouseEnter={() => setCursorVariant("hover")}
                       onMouseLeave={() => setCursorVariant("default")}

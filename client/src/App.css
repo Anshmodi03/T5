@@ -5,6 +5,10 @@
   top: 0;
   left: 0;
   z-index: 9999;
+  width: 16px;
+  height: 16px;
+  background-color: #3b82f6;
+  transition: background-color 0.2s ease;
 }
 
 /* Hide default cursor when custom cursor is active */
@@ -33,7 +37,14 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Gradient text */
+/* Add cursor pointer to interactive elements */
+button,
+a,
+.interactive {
+  cursor: pointer;
+}
+
+/* Update the gradient text classes */
 .gradient-text {
   background-clip: text;
   -webkit-background-clip: text;
@@ -41,20 +52,20 @@ html {
 }
 
 .primary-gradient {
-  background-image: linear-gradient(to right, #3b82f6, #8b5cf6);
+  background-image: linear-gradient(to right, #000000, #333333);
 }
 
 .secondary-gradient {
-  background-image: linear-gradient(to right, #ec4899, #8b5cf6);
+  background-image: linear-gradient(to right, #000000, #444444);
 }
 
 .success-gradient {
-  background-image: linear-gradient(to right, #10b981, #3b82f6);
+  background-image: linear-gradient(to right, #000000, #222222);
 }
 
-/* Animated background */
+/* Update the animated background */
 .animated-bg {
-  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background: linear-gradient(-45deg, #000000, #222222, #333333, #444444);
   background-size: 400% 400%;
   animation: gradient 15s ease infinite;
 }
@@ -87,8 +98,10 @@ html {
 }
 
 /* Hover effects */
+/* Update hover-lift class to include cursor pointer */
 .hover-lift {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
 }
 
 .hover-lift:hover {
@@ -114,6 +127,7 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #ffffff;
   z-index: 9999;
 }
 

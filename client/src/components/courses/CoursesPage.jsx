@@ -236,7 +236,7 @@ const CoursesPage = ({ setCursorVariant }) => {
             transition={{ duration: 0.6 }}
           >
             <motion.span
-              className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold mb-4"
+              className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm mt-20 font-semibold mb-4"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
@@ -331,7 +331,7 @@ const CoursesPage = ({ setCursorVariant }) => {
                 {/* Category Filter */}
                 <div className="relative" ref={categoryRef}>
                   <button
-                    className="flex items-center justify-between px-4 py-3 border border-gray-300 rounded-md bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 min-w-[180px]"
+                    className="flex items-center justify-between px-4 py-3 border border-black rounded-md bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-black transition-all duration-300 min-w-[180px]"
                     onClick={() =>
                       setShowCategoryDropdown(!showCategoryDropdown)
                     }
@@ -669,10 +669,10 @@ const CoursesPage = ({ setCursorVariant }) => {
             </div>
           </motion.div>
 
-          {/* Courses Grid - Updated to use real images */}
+          {/* Courses Grid */}
           {filteredCourses.length > 0 ? (
             <motion.div
-              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+              className="grid md:grid-cols-1 lg:grid-cols-3 gap-6"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
@@ -694,7 +694,7 @@ const CoursesPage = ({ setCursorVariant }) => {
                 >
                   <div className="relative overflow-hidden">
                     <motion.img
-                      src={course.image}
+                      src={course.image || "/placeholder.svg"}
                       alt={course.title}
                       className="w-full h-48 object-cover transition-transform duration-700 ease-in-out"
                       whileHover={{ scale: 1.05 }}
@@ -724,7 +724,7 @@ const CoursesPage = ({ setCursorVariant }) => {
                             ? "bg-red-100 text-red-500"
                             : "bg-white/80 text-gray-600 hover:text-red-500 hover:bg-red-50"
                         } backdrop-blur-sm transition-colors`}
-                        whileHover={{ scale: 1.1 }}
+                        whileHover={{ scale: 1.1, cursor: "pointer" }}
                         whileTap={{ scale: 0.9 }}
                         onClick={(e) => {
                           e.preventDefault();
@@ -781,9 +781,16 @@ const CoursesPage = ({ setCursorVariant }) => {
                       </div>
                     </div>
 
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-blue-600 transition-colors">
-                      {course.title}
-                    </h3>
+                    <div
+                      className={`bg-gradient-to-r from-black to-gray-800 p-6 text-white relative overflow-hidden`}
+                    >
+                      <div className="text-4xl mb-2 relative z-10"></div>
+                      <h3 className="text-xl font-bold relative z-10">
+                        {course.title}
+                      </h3>
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-10 -mt-10 transform transition-transform duration-500 group-hover:scale-150"></div>
+                      <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full -ml-6 -mb-6 transform transition-transform duration-500 group-hover:scale-150"></div>
+                    </div>
                     <p className="text-gray-600 mb-4 line-clamp-2">
                       {course.description}
                     </p>
@@ -804,9 +811,7 @@ const CoursesPage = ({ setCursorVariant }) => {
                         <span className="text-gray-400 line-through text-sm mr-2">
                           {course.price}
                         </span>
-                        <span
-                          className={`bg-gradient-to-r ${course.gradient} bg-clip-text text-transparent font-bold text-xl`}
-                        >
+                        <span className="text-black font-bold text-xl">
                           {course.discountedPrice}
                         </span>
                       </div>
@@ -823,7 +828,7 @@ const CoursesPage = ({ setCursorVariant }) => {
 
                     <Link
                       to={`/courses/${course.id}`}
-                      className={`block w-full py-2 bg-gradient-to-r ${course.gradient} text-white rounded-md text-center font-medium hover:shadow-lg transition-all duration-300 transform group-hover:scale-105`}
+                      className="w-full py-2 bg-black text-white border border-white rounded-md flex items-center justify-center hover:bg-opacity-80 transition-all"
                     >
                       Learn More
                     </Link>

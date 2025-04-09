@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -10,81 +8,42 @@ import {
   ChevronDown,
   ChevronRight,
   LogOut,
+  ChevronsDown,
 } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import T5Logo from "../../assets/T5.png";
+import { Link, useLocation } from "react-router-dom";
 import AuthModal from "../auth/AuthModal";
-import { logout } from "../auth/authService";
 
-const Header = ({ setCursorVariant }) => {
+const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("home");
+  const [activeSection, setActiveSection] = useState("hero");
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
+  const [showTeachersDropdown, setShowTeachersDropdown] = useState(false);
+
+  // New state variables for authentication modal
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authType, setAuthType] = useState("login");
   const [userRole, setUserRole] = useState("student");
-  const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
-  const [showTeachersDropdown, setShowTeachersDropdown] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
-  const [textColorClass, setTextColorClass] = useState("text-white");
 
   const location = useLocation();
-  const navigate = useNavigate();
+  const pathname = location.pathname;
   const dropdownRef = useRef(null);
   const coursesDropdownRef = useRef(null);
   const teachersDropdownRef = useRef(null);
   const headerRef = useRef(null);
 
-  // Check if user is logged in on component mount
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userData = localStorage.getItem("user");
-
-    if (token && userData) {
-      setIsLoggedIn(true);
-      setUser(JSON.parse(userData));
-    }
-  }, []);
-
-  // Dynamic text color based on background
-  useEffect(() => {
-    const updateTextColor = () => {
-      if (scrolled) {
-        setTextColorClass("text-gray-800");
-      } else {
-        // Check if we're at the hero section
-        if (location.pathname === "/" && activeSection === "home") {
-          setTextColorClass("text-white");
-        } else {
-          setTextColorClass("text-gray-800");
-        }
-      }
-    };
-
-    updateTextColor();
-  }, [scrolled, location.pathname, activeSection]);
-
+  // Handle scroll and update the active section based on scroll position
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
-
-      // Determine active section based on scroll position
+      // Determine the active section using section IDs
       const sections = document.querySelectorAll("section[id]");
       const scrollPosition = window.pageYOffset + 100;
-
-      // Always set home as active when at the top of the page
-      if (window.pageYOffset < 100 && location.pathname === "/") {
-        setActiveSection("home");
-        return;
-      }
-
       sections.forEach((section) => {
         const sectionTop = section.offsetTop;
         const sectionHeight = section.offsetHeight;
         const sectionId = section.getAttribute("id");
-
         if (
           scrollPosition >= sectionTop &&
           scrollPosition < sectionTop + sectionHeight
@@ -94,59 +53,62 @@ const Header = ({ setCursorVariant }) => {
       });
     };
 
-    window.addEventListener("scroll", handleScroll);
+    // Close dropdowns when clicking outside
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowUserDropdown(false);
+      }
+      if (
+        coursesDropdownRef.current &&
+        !coursesDropdownRef.current.contains(event.target)
+      ) {
+        setShowCoursesDropdown(false);
+      }
+      if (
+        teachersDropdownRef.current &&
+        !teachersDropdownRef.current.contains(event.target)
+      ) {
+        setShowTeachersDropdown(false);
+      }
+    };
 
-    // Initial call to set active section
-    handleScroll();
+    window.addEventListener("scroll", handleScroll);
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [location.pathname]);
+  }, []);
 
-  // Close mobile menu when route changes
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [location]);
-
+  // Navigation items
   const navItems = [
-    {
-      name: "Home",
-      link: "/",
-      dropdown: null,
-    },
+    { name: "Home", link: "/", dropdown: null },
     {
       name: "Courses",
       link: "/courses",
       dropdown: [
         "All Courses",
         "Engineering",
-        "Medical",
         "Computer Science",
-        "Design",
+        "Data Science",
+        "Artificial Intelligence",
       ],
     },
     {
-      name: "Teachers",
+      name: "Teacher",
       link: "#teachers",
-      dropdown: ["Our Faculty", "Become a Teacher", "Teaching Philosophy"],
+      dropdown: ["Our Faculty", "Become an Instructor", "Teaching Methodology"],
     },
-    {
-      name: "Testimonials",
-      link: "#testimonials",
-      dropdown: null,
-    },
-    {
-      name: "FAQ",
-      link: "#faq",
-      dropdown: null,
-    },
+    { name: "Testimonials", link: "#testimonials", dropdown: null },
+    { name: "FAQ", link: "#faq", dropdown: null },
   ];
 
   const toggleUserDropdown = () => {
     setShowUserDropdown(!showUserDropdown);
   };
 
+  // New function to open the authentication modal
   const openAuthModal = (type, role) => {
     setAuthType(type);
     setUserRole(role);
@@ -154,23 +116,7 @@ const Header = ({ setCursorVariant }) => {
     setShowUserDropdown(false);
   };
 
-  // Logout handler: call logout API then clear local data regardless of API result.
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error("Logout API call failed:", error);
-    } finally {
-      // Clear client-side authentication data
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      setIsLoggedIn(false);
-      setUser(null);
-      setShowUserDropdown(false);
-      navigate("/");
-    }
-  };
-
+  // Variants for dropdown animations using Framer Motion
   const dropdownVariants = {
     hidden: { opacity: 0, y: -5, scale: 0.95 },
     visible: {
@@ -210,17 +156,11 @@ const Header = ({ setCursorVariant }) => {
     },
   };
 
-  // Enhanced text gradient class with a subtler effect
-  const getTextGradientClass = () => {
-    if (scrolled) {
-      // When scrolled, use a darker indigo-blue-teal gradient
-      return "bg-gradient-to-r from-indigo-500 via-blue-500 to-teal-500 bg-clip-text text-transparent font-medium";
-    } else {
-      return location.pathname === "/" && activeSection === "home"
-        ? // On home page when not scrolled, use a lighter version of the gradient
-          "bg-gradient-to-r from-indigo-300 via-blue-300 to-teal-300 bg-clip-text text-transparent font-medium"
-        : // Otherwise, default to the darker gradient
-          "bg-gradient-to-r from-indigo-500 via-blue-500 to-teal-500 bg-clip-text text-transparent font-medium";
+  // Function to scroll to section
+  const scrollToSection = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -228,10 +168,10 @@ const Header = ({ setCursorVariant }) => {
     <>
       <header
         ref={headerRef}
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 py-3 ${
           scrolled
-            ? "py-2 bg-white/95 backdrop-blur-md shadow-md"
-            : "py-4 bg-transparent"
+            ? "bg-gradient-to-r from-black/95 to-black/85 shadow-lg backdrop-blur-sm"
+            : "bg-gradient-to-r from-black/70 to-black/60 backdrop-blur-sm"
         }`}
       >
         <div className="container mx-auto px-4 flex items-center justify-between">
@@ -241,15 +181,15 @@ const Header = ({ setCursorVariant }) => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            onMouseEnter={() => setCursorVariant("hover")}
-            onMouseLeave={() => setCursorVariant("default")}
           >
             <Link to="/">
-              <img
-                src={T5Logo || "/placeholder.svg"}
-                alt="T5 Logo"
-                className="w-15 h-15 rounded-sm"
-              />
+              <div className="h-12 w-auto bg-white rounded-md py-2 flex items-center justify-center cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300">
+                {/* This white container will make your black logo stand out */}
+                <span className="text-2xl font-bold text-black tracking-tight">
+                  <img src="/T5-Logo.png" alt="T5" className="h-13 w-auto" />
+                </span>
+                {/* Replace the text above with your logo: */}
+              </div>
             </Link>
           </motion.div>
 
@@ -262,55 +202,42 @@ const Header = ({ setCursorVariant }) => {
                 ref={
                   item.name === "Courses"
                     ? coursesDropdownRef
-                    : item.name === "Teachers"
+                    : item.name === "Teacher"
                     ? teachersDropdownRef
                     : null
                 }
                 onMouseEnter={() => {
                   if (item.name === "Courses") setShowCoursesDropdown(true);
-                  if (item.name === "Teachers") setShowTeachersDropdown(true);
+                  if (item.name === "Teacher") setShowTeachersDropdown(true);
                 }}
                 onMouseLeave={() => {
                   if (item.name === "Courses") setShowCoursesDropdown(false);
-                  if (item.name === "Teachers") setShowTeachersDropdown(false);
+                  if (item.name === "Teacher") setShowTeachersDropdown(false);
                 }}
               >
                 {item.name === "Courses" ? (
                   <>
-                    <Link
-                      to="/courses"
-                      className={`px-4 py-2 mx-1 rounded-md transition-all duration-300 flex items-center ${
-                        location.pathname.includes("/courses")
-                          ? "bg-teal-400 text-white font-bold"
-                          : `hover:text-teal-400 hover:bg-teal-50/50 ${
-                              scrolled
-                                ? "text-gray-800 font-semibold"
-                                : `${textColorClass} font-semibold`
-                            }`
-                      }`}
-                      onMouseEnter={() => setCursorVariant("hover")}
-                      onMouseLeave={() => setCursorVariant("default")}
-                    >
-                      <span
-                        className={`relative ${
-                          location.pathname.includes("/courses")
-                            ? ""
-                            : getTextGradientClass()
+                    <Link to="/courses">
+                      <div
+                        className={`px-4 py-2 mx-1 rounded-md transition-all duration-300 flex items-center cursor-pointer ${
+                          pathname.includes("/courses")
+                            ? "bg-white text-black"
+                            : "text-white hover:text-white hover:bg-white/10"
                         }`}
                       >
-                        Courses
-                      </span>
-                      <ChevronDown
-                        className={`ml-1 h-4 w-4 transition-transform duration-300 ${
-                          showCoursesDropdown ? "rotate-180" : ""
-                        }`}
-                      />
+                        <span className="relative">Courses</span>
+                        <ChevronDown
+                          className={`ml-1 h-4 w-4 transition-transform duration-300 ${
+                            showCoursesDropdown ? "rotate-180" : ""
+                          }`}
+                        />
+                      </div>
                     </Link>
 
                     <AnimatePresence>
                       {showCoursesDropdown && (
                         <motion.div
-                          className="absolute left-0 mt-1 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50 overflow-hidden"
+                          className="absolute left-0 mt-1 w-56 rounded-md shadow-lg bg-black/95 ring-1 ring-white/20 z-50 overflow-hidden"
                           variants={dropdownVariants}
                           initial="hidden"
                           animate="visible"
@@ -328,15 +255,11 @@ const Header = ({ setCursorVariant }) => {
                                       ? "/courses"
                                       : `/courses?category=${subItem}`
                                   }
-                                  className="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-600 transition-colors font-medium"
-                                  onClick={() => setShowCoursesDropdown(false)}
-                                  onMouseEnter={() => setCursorVariant("hover")}
-                                  onMouseLeave={() =>
-                                    setCursorVariant("default")
-                                  }
                                 >
-                                  {subItem}
-                                  <ChevronRight className="h-4 w-4 opacity-70" />
+                                  <div className="flex items-center justify-between px-4 py-3 text-sm text-white hover:bg-white/10 transition-colors cursor-pointer">
+                                    {subItem}
+                                    <ChevronRight className="h-4 w-4 opacity-70" />
+                                  </div>
                                 </Link>
                               </motion.div>
                             ))}
@@ -345,42 +268,28 @@ const Header = ({ setCursorVariant }) => {
                       )}
                     </AnimatePresence>
                   </>
-                ) : item.name === "Teachers" ? (
+                ) : item.name === "Teacher" ? (
                   <>
-                    <Link
-                      to={item.link}
+                    <button
+                      onClick={() => scrollToSection("teachers")}
                       className={`px-4 py-2 mx-1 rounded-md transition-all duration-300 flex items-center ${
-                        activeSection === item.link.substring(1)
-                          ? "bg-teal-400 text-white font-bold"
-                          : `hover:text-teal-400 hover:bg-teal-50/50 ${
-                              scrolled
-                                ? "text-gray-800 font-semibold"
-                                : `${textColorClass} font-semibold`
-                            }`
+                        activeSection === "teachers"
+                          ? "bg-white text-black"
+                          : "text-white hover:text-white hover:bg-white/10"
                       }`}
-                      onMouseEnter={() => setCursorVariant("hover")}
-                      onMouseLeave={() => setCursorVariant("default")}
                     >
-                      <span
-                        className={`relative ${
-                          activeSection === item.link.substring(1)
-                            ? ""
-                            : getTextGradientClass()
-                        }`}
-                      >
-                        Teachers
-                      </span>
+                      <span className="relative">Teacher</span>
                       <ChevronDown
                         className={`ml-1 h-4 w-4 transition-transform duration-300 ${
                           showTeachersDropdown ? "rotate-180" : ""
                         }`}
                       />
-                    </Link>
+                    </button>
 
                     <AnimatePresence>
                       {showTeachersDropdown && (
                         <motion.div
-                          className="absolute left-0 mt-1 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50 overflow-hidden"
+                          className="absolute left-0 mt-1 w-56 rounded-md shadow-lg bg-black/95 ring-1 ring-white/20 z-50 overflow-hidden"
                           variants={dropdownVariants}
                           initial="hidden"
                           animate="visible"
@@ -394,12 +303,8 @@ const Header = ({ setCursorVariant }) => {
                               >
                                 <a
                                   href="#"
-                                  className="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-600 transition-colors font-medium"
+                                  className="flex items-center justify-between px-4 py-3 text-sm text-white hover:bg-white/10 transition-colors"
                                   onClick={() => setShowTeachersDropdown(false)}
-                                  onMouseEnter={() => setCursorVariant("hover")}
-                                  onMouseLeave={() =>
-                                    setCursorVariant("default")
-                                  }
                                 >
                                   {subItem}
                                   <ChevronRight className="h-4 w-4 opacity-70" />
@@ -412,96 +317,57 @@ const Header = ({ setCursorVariant }) => {
                     </AnimatePresence>
                   </>
                 ) : (
-                  <Link
-                    to={item.link}
-                    className={`px-4 py-2 mx-1 rounded-md transition-all duration-300 ${
-                      (item.link === "/" &&
-                        location.pathname === "/" &&
-                        activeSection === "home") ||
-                      (item.link !== "/" &&
-                        activeSection === item.link.substring(1))
-                        ? "bg-teal-400 text-white font-bold"
-                        : `hover:text-teal-400 hover:bg-teal-50/50 ${
-                            scrolled
-                              ? "text-gray-800 font-semibold"
-                              : `${textColorClass} font-semibold`
-                          }`
-                    }`}
-                    onMouseEnter={() => setCursorVariant("hover")}
-                    onMouseLeave={() => setCursorVariant("default")}
-                  >
-                    <span
-                      className={`relative ${
+                  <Link to={item.link}>
+                    <div
+                      className={`px-4 py-2 mx-1 rounded-md transition-all duration-300 cursor-pointer ${
                         (item.link === "/" &&
-                          location.pathname === "/" &&
-                          activeSection === "home") ||
-                        (item.link !== "/" &&
+                          pathname === "/" &&
+                          activeSection === "hero") ||
+                        (item.link.startsWith("#") &&
                           activeSection === item.link.substring(1))
-                          ? ""
-                          : getTextGradientClass()
+                          ? "bg-white text-black"
+                          : "text-white hover:text-white hover:bg-white/10"
                       }`}
                     >
-                      {item.name}
-                      {((item.link === "/" &&
-                        location.pathname === "/" &&
-                        activeSection === "home") ||
-                        (item.link !== "/" &&
-                          activeSection === item.link.substring(1))) && (
-                        <motion.span
-                          className="absolute -bottom-1 left-0 w-full h-0.5 bg-white"
-                          layoutId="underline"
-                        />
-                      )}
-                    </span>
+                      <span className="relative">
+                        {item.name}
+                        {((item.link === "/" &&
+                          pathname === "/" &&
+                          activeSection === "hero") ||
+                          (item.link.startsWith("#") &&
+                            activeSection === item.link.substring(1))) && (
+                          <motion.span
+                            className="absolute -bottom-1 left-0 w-full h-0.5 bg-white"
+                            layoutId="underline"
+                          />
+                        )}
+                      </span>
+                    </div>
                   </Link>
                 )}
               </div>
             ))}
           </nav>
 
-          {/* User Account Dropdown */}
+          {/* Authentication Button / Account Dropdown */}
           <div className="hidden md:block relative" ref={dropdownRef}>
-            {isLoggedIn ? (
-              <motion.button
-                className="px-4 py-2 bg-gradient-to-r from-teal-400 to-indigo-400 text-white rounded-md hover:shadow-lg transition-all flex items-center gap-2 font-bold"
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0 10px 25px rgba(59, 130, 246, 0.5)",
-                }}
-                whileTap={{ scale: 0.95 }}
-                onMouseEnter={() => setCursorVariant("hover")}
-                onMouseLeave={() => setCursorVariant("default")}
-                onClick={toggleUserDropdown}
-              >
-                <User className="h-4 w-4" />
-                {user?.name || "User"}
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform duration-200 ${
-                    showUserDropdown ? "rotate-180" : ""
-                  }`}
-                />
-              </motion.button>
-            ) : (
-              <motion.button
-                className="px-4 py-2 bg-gradient-to-r from-teal-400 to-indigo-400 text-white rounded-md hover:shadow-lg transition-all flex items-center gap-2 font-bold"
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0 10px 25px rgba(59, 130, 246, 0.5)",
-                }}
-                whileTap={{ scale: 0.95 }}
-                onMouseEnter={() => setCursorVariant("hover")}
-                onMouseLeave={() => setCursorVariant("default")}
-                onClick={toggleUserDropdown}
-              >
-                <User className="h-4 w-4" />
-                Account
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform duration-200 ${
-                    showUserDropdown ? "rotate-180" : ""
-                  }`}
-                />
-              </motion.button>
-            )}
+            <motion.button
+              className="px-4 py-2 border border-white text-black bg-white rounded-md hover:shadow-lg transition-all flex items-center gap-2"
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
+              }}
+              whileTap={{ scale: 0.95 }}
+              onClick={toggleUserDropdown}
+            >
+              <User className="h-4 w-4" />
+              Account
+              <ChevronDown
+                className={`h-4 w-4 transition-transform duration-200 ${
+                  showUserDropdown ? "rotate-180" : ""
+                }`}
+              />
+            </motion.button>
 
             <AnimatePresence>
               {showUserDropdown && (
@@ -510,253 +376,100 @@ const Header = ({ setCursorVariant }) => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+                  className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 overflow-hidden z-50"
                 >
-                  {isLoggedIn ? (
-                    <div className="py-1">
-                      <div className="px-4 py-2 border-b border-gray-100">
-                        <p className="text-sm font-medium text-gray-900">
-                          {user?.name || "User"}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {user?.email || ""}
-                        </p>
-                      </div>
-                      <Link
-                        to="/profile"
-                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-400 font-medium"
-                        onClick={() => setShowUserDropdown(false)}
-                        onMouseEnter={() => setCursorVariant("hover")}
-                        onMouseLeave={() => setCursorVariant("default")}
-                      >
-                        <User className="h-4 w-4 mr-2" />
-                        My Profile
-                      </Link>
-                      <Link
-                        to="/my-courses"
-                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-400 font-medium"
-                        onClick={() => setShowUserDropdown(false)}
-                        onMouseEnter={() => setCursorVariant("hover")}
-                        onMouseLeave={() => setCursorVariant("default")}
-                      >
-                        <BookOpen className="h-4 w-4 mr-2" />
-                        My Courses
-                      </Link>
-                      {/* Logout button */}
-                      <button
-                        className="flex items-center w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-400 font-medium"
-                        onClick={handleLogout}
-                        onMouseEnter={() => setCursorVariant("hover")}
-                        onMouseLeave={() => setCursorVariant("default")}
-                      >
-                        <LogOut className="h-4 w-4 mr-2" />
-                        Logout
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="py-1">
-                      <div className="px-4 py-2 border-b border-gray-100">
-                        <p className="text-sm font-medium text-gray-900">
-                          Continue as
-                        </p>
-                      </div>
-                      <a
-                        href="#"
-                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-400 font-medium"
-                        onMouseEnter={() => setCursorVariant("hover")}
-                        onMouseLeave={() => setCursorVariant("default")}
-                        onClick={() => openAuthModal("login", "student")}
-                      >
-                        <User className="h-4 w-4 mr-2" />
-                        Student
-                      </a>
-                      <a
-                        href="#"
-                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-400 font-medium"
-                        onMouseEnter={() => setCursorVariant("hover")}
-                        onMouseLeave={() => setCursorVariant("default")}
-                        onClick={() => openAuthModal("login", "teacher")}
-                      >
-                        <BookOpen className="h-4 w-4 mr-2" />
-                        Teacher
-                      </a>
-                    </div>
-                  )}
+                  <div className="py-1">
+                    <a
+                      href="#"
+                      className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center gap-2"
+                      onClick={() => openAuthModal("login", "student")}
+                    >
+                      <BookOpen className="h-4 w-4" />
+                      Continue as Student
+                    </a>
+                    <a
+                      href="#"
+                      className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center gap-2 border-t border-gray-100"
+                      onClick={() => openAuthModal("login", "teacher")}
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Continue as Teacher
+                    </a>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
-          {/* Mobile Menu Button */}
-          <motion.button
-            className="md:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100 z-50"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            whileTap={{ scale: 0.9 }}
-            onMouseEnter={() => setCursorVariant("hover")}
-            onMouseLeave={() => setCursorVariant("default")}
-          >
-            {isMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </motion.button>
-        </div>
-
-        {/* Mobile Navigation */}
-        <AnimatePresence>
-          {isMenuOpen && (
-            <motion.div
-              className="fixed inset-0 bg-white z-40 pt-20 px-4 md:hidden overflow-y-auto"
-              initial={{ opacity: 0, x: "100%" }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+          {/* Mobile menu button */}
+          <div className="md:hidden flex items-center">
+            <button
+              className="text-white p-2 rounded-md focus:outline-none"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              <div className="flex flex-col gap-4">
-                {navItems.map((item, index) => (
-                  <div key={index}>
-                    {item.name === "Courses" ? (
-                      <>
-                        <Link
-                          to="/courses"
-                          className={`block py-3 px-4 rounded-md text-lg font-bold ${
-                            location.pathname.includes("/courses")
-                              ? "text-white bg-teal-400"
-                              : "text-gray-700"
-                          }`}
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          {item.name}
-                        </Link>
-                        <div className="ml-4 mt-2 space-y-2">
-                          {item.dropdown.map((subItem, subIndex) => (
-                            <Link
-                              key={subIndex}
-                              to={
-                                subItem === "All Courses"
-                                  ? "/courses"
-                                  : `/courses?category=${subItem}`
-                              }
-                              className="block py-2 px-4 text-gray-500 hover:text-teal-500 rounded-md hover:bg-teal-50 transition-colors font-medium"
-                              onClick={() => setIsMenuOpen(false)}
-                            >
-                              {subItem}
-                            </Link>
-                          ))}
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <Link
-                          to={item.link}
-                          className={`block py-3 px-4 rounded-md text-lg font-bold ${
-                            (item.link === "/" &&
-                              location.pathname === "/" &&
-                              activeSection === "home") ||
-                            (item.link !== "/" &&
-                              activeSection === item.link.substring(1))
-                              ? "text-white bg-teal-400"
-                              : "text-gray-700"
-                          }`}
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          {item.name}
-                        </Link>
-                        {item.dropdown && (
-                          <div className="ml-4 mt-2 space-y-2">
-                            {item.dropdown.map((subItem, subIndex) => (
-                              <a
-                                key={subIndex}
-                                href="#"
-                                className="block py-2 px-4 text-gray-500 hover:text-teal-500 rounded-md hover:bg-teal-50 transition-colors font-medium"
-                                onClick={() => setIsMenuOpen(false)}
-                              >
-                                {subItem}
-                              </a>
-                            ))}
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                ))}
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
+          </div>
+        </div>
+      </header>
 
-                <div className="mt-6 space-y-4">
-                  {isLoggedIn ? (
-                    <>
-                      <div className="px-4 py-2 border-b border-gray-200">
-                        <p className="text-lg font-bold text-gray-900">
-                          {user?.name || "User"}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {user?.email || ""}
-                        </p>
+      {/* Mobile Navigation Menu */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed top-[60px] inset-x-0 z-40 bg-black/95 overflow-hidden md:hidden"
+          >
+            <div className="px-4 py-8 space-y-4">
+              {navItems.map((item, index) => (
+                <div key={index} className="py-2">
+                  {item.dropdown ? (
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center text-white font-medium">
+                        <span>{item.name}</span>
                       </div>
-                      <Link
-                        to="/profile"
-                        className="flex items-center py-3 px-4 text-gray-700 hover:text-teal-400 rounded-md hover:bg-teal-50 font-medium"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <User className="h-5 w-5 mr-2" />
-                        My Profile
-                      </Link>
-                      <Link
-                        to="/my-courses"
-                        className="flex items-center py-3 px-4 text-gray-700 hover:text-teal-400 rounded-md hover:bg-teal-50 font-medium"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <BookOpen className="h-5 w-5 mr-2" />
-                        My Courses
-                      </Link>
-                      <button
-                        className="flex items-center w-full text-left py-3 px-4 text-gray-700 hover:text-teal-400 rounded-md hover:bg-teal-50 font-medium"
-                        onClick={() => {
-                          handleLogout();
-                          setIsMenuOpen(false);
-                        }}
-                      >
-                        <LogOut className="h-5 w-5 mr-2" />
-                        Logout
-                      </button>
-                    </>
+                      <div className="pl-4 space-y-2 border-l border-white/20">
+                        {item.dropdown.map((subItem, subIndex) => (
+                          <a
+                            key={subIndex}
+                            href="#"
+                            className="block text-white/80 hover:text-white transition-colors py-1"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            {subItem}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
                   ) : (
-                    <>
-                      <div className="px-4 py-2">
-                        <p className="text-lg font-bold text-gray-900">
-                          Continue as
-                        </p>
+                    <Link to={item.link}>
+                      <div
+                        className="block text-white font-medium py-1 cursor-pointer"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {item.name}
                       </div>
-                      <a
-                        href="#"
-                        className="flex items-center py-3 px-4 text-gray-700 hover:text-teal-400 rounded-md hover:bg-teal-50 font-medium"
-                        onClick={() => {
-                          setIsMenuOpen(false);
-                          openAuthModal("login", "student");
-                        }}
-                      >
-                        <User className="h-5 w-5 mr-2" />
-                        Student
-                      </a>
-                      <a
-                        href="#"
-                        className="flex items-center py-3 px-4 text-gray-700 hover:text-teal-400 rounded-md hover:bg-teal-50 font-medium"
-                        onClick={() => {
-                          setIsMenuOpen(false);
-                          openAuthModal("login", "teacher");
-                        }}
-                      >
-                        <BookOpen className="h-5 w-5 mr-2" />
-                        Teacher
-                      </a>
-                    </>
+                    </Link>
                   )}
                 </div>
+              ))}
+              <div className="pt-4 border-t border-white/10">
+                <button className="w-full py-3 px-4 bg-white text-black rounded-md font-medium flex items-center justify-center gap-2">
+                  <User className="h-4 w-4" />
+                  Account
+                </button>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </header>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Authentication Modal */}
       <AnimatePresence>
@@ -765,8 +478,6 @@ const Header = ({ setCursorVariant }) => {
             authType={authType}
             userRole={userRole}
             onClose={() => setShowAuthModal(false)}
-            onSwitchAuthType={(type) => setAuthType(type)}
-            setCursorVariant={setCursorVariant}
           />
         )}
       </AnimatePresence>

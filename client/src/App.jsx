@@ -101,9 +101,9 @@ function App() {
                   <>
                     <Header setCursorVariant={setCursorVariant} />
                     <Hero setCursorVariant={setCursorVariant} />
+                    <Achievements setCursorVariant={setCursorVariant} />
                     <Courses setCursorVariant={setCursorVariant} />
                     <Teachers setCursorVariant={setCursorVariant} />
-                    <Achievements setCursorVariant={setCursorVariant} />
                     <Testimonials setCursorVariant={setCursorVariant} />
                     <FAQ setCursorVariant={setCursorVariant} />
                     <Subscribe setCursorVariant={setCursorVariant} />
