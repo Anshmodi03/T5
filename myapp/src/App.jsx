@@ -11,6 +11,12 @@ import Navbar from "./components/Frontpage/Navbar";
 import Subscribe from "./components/Frontpage/Subscribe";
 import Teacher from "./components/Frontpage/Teacher";
 import Testimonial from "./components/Frontpage/Testimonial";
+import CarrerGuidance from "./pages/CarrerGuidance";
+import Certification from "./pages/Certification";
+import ELearning from "./pages/ELearning";
+import Mentorship from "./pages/Mentorship";
+import Webinar from "./pages/Webinar";
+import Workshop from "./pages/Workshop";
 
 function App() {
   return (
@@ -25,9 +31,15 @@ function App() {
       <FAQSection />
       <Footer />
       <Subscribe /> */}
-      <Header />
+      {/* <Header />
       <CoursePage />
-      <Footer />
+      <Footer /> */}
+      {/* <Mentorship /> */}
+      {/* <Workshop /> */}
+      {/* <Certification /> */}
+      {/* <CarrerGuidance /> */}
+      {/* <Webinar /> */}
+      <ELearning />
     </>
   );
 }
