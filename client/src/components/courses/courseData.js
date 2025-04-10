@@ -55,7 +55,7 @@ export const courses = [
     featured: true,
     instructor: {
       name: "Dr. Rahul Sharma",
-      image: "/placeholder.svg?height=100&width=100",
+      image: "/instructor.png",
       bio: "Mathematics professor with 15+ years of experience teaching engineering students",
       rating: 4.8,
     },
@@ -136,7 +136,7 @@ export const courses = [
     featured: true,
     instructor: {
       name: "Dr. Priya Singh",
-      image: "/placeholder.svg?height=100&width=100",
+      image: "/instructor.png",
       bio: "Board-certified physician with 10+ years of clinical and teaching experience",
       rating: 4.9,
     },
@@ -217,7 +217,7 @@ export const courses = [
     featured: false,
     instructor: {
       name: "Prof. Michael Chen",
-      image: "/placeholder.svg?height=100&width=100",
+      image: "/instructor.png",
       bio: "Physics educator with 12+ years of experience teaching high school and AP Physics",
       rating: 4.8,
     },
@@ -298,7 +298,7 @@ export const courses = [
     featured: false,
     instructor: {
       name: "Dr. Sarah Johnson",
-      image: "/placeholder.svg?height=100&width=100",
+      image: "/instructor.png",
       bio: "Organic chemistry professor with research experience in medicinal chemistry and drug design",
       rating: 4.9,
     },
@@ -379,7 +379,7 @@ export const courses = [
     featured: true,
     instructor: {
       name: "Prof. James Wilson",
-      image: "/placeholder.svg?height=100&width=100",
+      image: "/instructor.png",
       bio: "Computer Science professor with experience at leading tech companies and a passion for teaching",
       rating: 4.8,
     },
@@ -460,7 +460,7 @@ export const courses = [
     featured: false,
     instructor: {
       name: "Dr. Elena Martinez",
-      image: "/placeholder.svg?height=100&width=100",
+      image: "/instructor.png",
       bio: "Mathematics professor specializing in analysis and differential equations",
       rating: 4.9,
     },
@@ -540,7 +540,7 @@ export const courses = [
     featured: false,
     instructor: {
       name: "Dr. Robert Kim",
-      image: "/placeholder.svg?height=100&width=100",
+      image: "/instructor.png",
       bio: "Molecular biologist with research experience in genomics and biotechnology",
       rating: 4.8,
     },
@@ -621,7 +621,7 @@ export const courses = [
     featured: false,
     instructor: {
       name: "Prof. Emma Thompson",
-      image: "/placeholder.svg?height=100&width=100",
+      image: "/instructor.png",
       bio: "English literature professor with expertise in writing instruction and curriculum development",
       rating: 4.7,
     },
