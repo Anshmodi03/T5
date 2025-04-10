@@ -1,9 +1,6 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { courses } from "./courseData";
 import {
   ArrowLeft,
   Star,
@@ -16,31 +13,21 @@ import {
   ChevronUp,
   BookOpen,
   Play,
-  Download,
-  Share2,
-  Heart,
-  MessageCircle,
-  Bookmark,
-  AlertCircle,
-  ShoppingCart,
-  Gift,
   Sparkles,
 } from "lucide-react";
+
+import { courses } from "./courseData";
 import Header from "../Frontpage/Header";
 import Footer from "../Frontpage/Footer";
 
-const CourseDetail = ({ setCursorVariant }) => {
+const CourseDetail = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
+
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [expandedModules, setExpandedModules] = useState({});
-  const [isWishlisted, setIsWishlisted] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const [showShareOptions, setShowShareOptions] = useState(false);
-  const [relatedCourses, setRelatedCourses] = useState([]);
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   useEffect(() => {
     // Simulate API call
@@ -58,16 +45,6 @@ const CourseDetail = ({ setCursorVariant }) => {
         setExpandedModules(initialExpandedState);
       }
 
-      // Find related courses (same category)
-      if (foundCourse) {
-        const related = courses
-          .filter(
-            (c) => c.id !== courseId && c.category === foundCourse.category
-          )
-          .slice(0, 3);
-        setRelatedCourses(related);
-      }
-
       // Scroll to top when course changes
       window.scrollTo(0, 0);
     }, 500);
@@ -78,13 +55,6 @@ const CourseDetail = ({ setCursorVariant }) => {
       ...prev,
       [index]: !prev[index],
     }));
-  };
-
-  const handleEnrollNow = () => {
-    setShowSuccessMessage(true);
-    setTimeout(() => {
-      setShowSuccessMessage(false);
-    }, 3000);
   };
 
   const containerVariants = {
@@ -115,14 +85,14 @@ const CourseDetail = ({ setCursorVariant }) => {
   if (loading) {
     return (
       <>
-        <Header setCursorVariant={setCursorVariant} />
-        <div className="min-h-screen flex items-center justify-center pt-20 pb-20">
+        <Header />
+        <div className="min-h-screen flex items-center justify-center pt-20 pb-20 bg-white text-gray-800">
           <div className="text-center">
-            <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-16 h-16 border-4 border-gray-900 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-600">Loading course details...</p>
           </div>
         </div>
-        <Footer setCursorVariant={setCursorVariant} />
+        <Footer />
       </>
     );
   }
@@ -130,26 +100,39 @@ const CourseDetail = ({ setCursorVariant }) => {
   if (!course) {
     return (
       <>
-        <Header setCursorVariant={setCursorVariant} />
+        <Header />
         <motion.div
-          className="min-h-screen pt-20 pb-20 flex flex-col items-center justify-center"
+          className="min-h-screen pt-20 pb-20 flex flex-col items-center justify-center bg-white text-gray-800"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <div className="text-center max-w-md mx-auto p-8 bg-white rounded-xl shadow-md">
+          <div className="text-center max-w-md mx-auto p-8 bg-white rounded-xl shadow-lg border border-gray-100">
             <div className="text-red-500 mb-4">
-              <AlertCircle className="w-16 h-16 mx-auto" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-16 w-16 mx-auto"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
             </div>
-            <h2 className="text-2xl font-bold mb-2">Course Not Found</h2>
+            <h2 className="text-2xl font-bold mb-2 text-gray-800">
+              Course Not Found
+            </h2>
             <p className="text-gray-600 mb-6">
               The course you're looking for doesn't exist or has been removed.
             </p>
             <motion.button
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-gradient-to-r from-gray-900 to-black text-white rounded-md hover:opacity-90 transition-colors"
               onClick={() => navigate("/courses")}
-              onMouseEnter={() => setCursorVariant("hover")}
-              onMouseLeave={() => setCursorVariant("default")}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -157,41 +140,23 @@ const CourseDetail = ({ setCursorVariant }) => {
             </motion.button>
           </div>
         </motion.div>
-        <Footer setCursorVariant={setCursorVariant} />
+        <Footer />
       </>
     );
   }
 
   return (
     <>
-      <Header setCursorVariant={setCursorVariant} />
+      <Header />
       <motion.div
-        className="min-h-screen bg-gray-50 pt-20 pb-20"
+        className="min-h-screen bg-white text-gray-800 pt-12 pb-20"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Success Message */}
-        <AnimatePresence>
-          {showSuccessMessage && (
-            <motion.div
-              className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 bg-green-100 border border-green-400 text-green-700 px-6 py-3 rounded-md shadow-lg flex items-center"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
-            >
-              <CheckCircle className="h-5 w-5 mr-2 text-green-500" />
-              <span>Course added to your cart successfully!</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Course Header */}
-        <div
-          className={`bg-gradient-to-r from-black to-gray-800 text-white py-12`}
-        >
+        <div className="bg-black py-12 text-white">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -201,8 +166,6 @@ const CourseDetail = ({ setCursorVariant }) => {
               <Link
                 to="/courses"
                 className="inline-flex items-center text-white/80 hover:text-white mb-6 transition-colors"
-                onMouseEnter={() => setCursorVariant("hover")}
-                onMouseLeave={() => setCursorVariant("default")}
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Courses
@@ -233,15 +196,24 @@ const CourseDetail = ({ setCursorVariant }) => {
                     {course.title}
                   </motion.h1>
                   <motion.p
-                    className="text-white/80 max-w-2xl mb-4"
+                    className="max-w-2xl mb-4 text-lg"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.5 }}
                   >
                     {course.description}
                   </motion.p>
+                  {/* Instructor bio in header for added detail */}
+                  {course.instructor && (
+                    <div className="mt-4">
+                      <p className="text-base">
+                        <strong>About the Instructor:</strong>{" "}
+                        {course.instructor.bio}
+                      </p>
+                    </div>
+                  )}
 
-                  <div className="flex flex-wrap items-center gap-4 mb-2">
+                  <div className="flex flex-wrap items-center gap-4 mt-4">
                     <motion.div
                       className="flex items-center"
                       initial={{ opacity: 0, x: -20 }}
@@ -273,30 +245,31 @@ const CourseDetail = ({ setCursorVariant }) => {
                       <span>{course.validity}</span>
                     </motion.div>
                   </div>
-
-                  <motion.div
-                    className="flex items-center"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6, duration: 0.5 }}
-                  >
-                    <img
-                      src={course.instructor.image || "/placeholder.svg"}
-                      alt={course.instructor.name}
-                      className="w-10 h-10 rounded-full object-cover border-2 border-white"
-                    />
-                    <div className="ml-2">
-                      <p className="font-medium">
-                        Instructor: {course.instructor.name}
-                      </p>
-                      <div className="flex items-center">
-                        <Star className="h-3 w-3 text-yellow-400 fill-current" />
-                        <span className="text-sm ml-1">
-                          {course.instructor.rating}
-                        </span>
+                  {course.instructor && (
+                    <motion.div
+                      className="flex items-center mt-4"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6, duration: 0.5 }}
+                    >
+                      <img
+                        src={course.instructor.image || "/placeholder.svg"}
+                        alt={course.instructor.name}
+                        className="w-10 h-10 rounded-full object-cover border-2 border-white"
+                      />
+                      <div className="ml-2">
+                        <p className="font-medium">
+                          Instructor: {course.instructor.name}
+                        </p>
+                        <div className="flex items-center">
+                          <Star className="h-3 w-3 text-yellow-400 fill-current" />
+                          <span className="text-sm ml-1">
+                            {course.instructor.rating}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </motion.div>
+                    </motion.div>
+                  )}
                 </div>
 
                 <motion.div
@@ -330,733 +303,527 @@ const CourseDetail = ({ setCursorVariant }) => {
                       </span>
                     </div>
                     <motion.button
-                      className="w-full py-3 px-6 bg-black text-white border border-white rounded-md font-bold text-lg mb-3 hover:bg-opacity-90 transition-colors flex items-center justify-center"
-                      whileHover={{ scale: 1.03, cursor: "pointer" }}
+                      className="w-full py-3 px-6 bg-white text-black rounded-md font-bold text-lg mb-3 hover:bg-opacity-90 transition-colors flex items-center justify-center"
+                      whileHover={{ scale: 1.03 }}
                       whileTap={{ scale: 0.98 }}
-                      onMouseEnter={() => setCursorVariant("hover")}
-                      onMouseLeave={() => setCursorVariant("default")}
-                      onClick={handleEnrollNow}
                     >
-                      <ShoppingCart className="h-5 w-5 mr-2 text-white" />
-                      <span>Enroll Now</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      Watch Preview
                     </motion.button>
-                    <p className="text-white/70 text-sm">
+                    <Link to="/courses">
+                      <motion.button
+                        className="w-full py-3 px-6 bg-transparent border border-white text-white rounded-md font-bold text-lg hover:bg-white/10 transition-colors"
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        Learn More
+                      </motion.button>
+                    </Link>
+                    <p className="text-xs text-white/60 mt-3">
                       30-Day Money-Back Guarantee
                     </p>
-
-                    <div className="flex justify-between mt-4 pt-4 border-t border-white/20">
-                      <motion.button
-                        className={`flex items-center text-white/80 hover:text-white transition-colors ${
-                          isWishlisted ? "text-red-300" : ""
-                        }`}
-                        whileHover={{ scale: 1.1, cursor: "pointer" }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => setIsWishlisted(!isWishlisted)}
-                        onMouseEnter={() => setCursorVariant("hover")}
-                        onMouseLeave={() => setCursorVariant("default")}
-                      >
-                        <Heart
-                          className={`h-5 w-5 mr-1 ${
-                            isWishlisted ? "fill-current" : ""
-                          }`}
-                        />
-                        Wishlist
-                      </motion.button>
-
-                      <motion.button
-                        className={`flex items-center text-white/80 hover:text-white transition-colors ${
-                          isBookmarked ? "text-yellow-300" : ""
-                        }`}
-                        whileHover={{ scale: 1.1, cursor: "pointer" }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => setIsBookmarked(!isBookmarked)}
-                        onMouseEnter={() => setCursorVariant("hover")}
-                        onMouseLeave={() => setCursorVariant("default")}
-                      >
-                        <Bookmark
-                          className={`h-5 w-5 mr-1 ${
-                            isBookmarked ? "fill-current" : ""
-                          }`}
-                        />
-                        Save
-                      </motion.button>
-
-                      <div className="relative">
-                        <motion.button
-                          className="flex items-center text-white/80 hover:text-white transition-colors"
-                          whileHover={{ scale: 1.1, cursor: "pointer" }}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() => setShowShareOptions(!showShareOptions)}
-                          onMouseEnter={() => setCursorVariant("hover")}
-                          onMouseLeave={() => setCursorVariant("default")}
-                        >
-                          <Share2 className="h-5 w-5 mr-1" />
-                          Share
-                        </motion.button>
-
-                        <AnimatePresence>
-                          {showShareOptions && (
-                            <motion.div
-                              className="absolute right-0 bottom-full mb-2 bg-white rounded-md shadow-lg p-2 w-36"
-                              initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                              animate={{ opacity: 1, y: 0, scale: 1 }}
-                              exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                              transition={{ duration: 0.2 }}
-                            >
-                              <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors flex items-center cursor-pointer">
-                                <svg
-                                  className="w-4 h-4 mr-2 text-blue-600"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                                </svg>
-                                Facebook
-                              </button>
-                              <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors flex items-center cursor-pointer">
-                                <svg
-                                  className="w-4 h-4 mr-2 text-blue-400"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.054 10.054 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
-                                </svg>
-                                Twitter
-                              </button>
-                              <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors flex items-center cursor-pointer">
-                                <svg
-                                  className="w-4 h-4 mr-2 text-blue-500"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                                </svg>
-                                LinkedIn
-                              </button>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    </div>
                   </div>
-
-                  <motion.div
-                    className="mt-4 bg-white/10 backdrop-blur-sm rounded-lg p-4 flex items-center"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.7, duration: 0.5 }}
-                  >
-                    <Gift className="h-6 w-6 text-white mr-3" />
-                    <div className="text-left">
-                      <p className="font-medium">Gift this course</p>
-                      <p className="text-sm text-white/70">
-                        Perfect for friends & colleagues
-                      </p>
-                    </div>
-                  </motion.div>
                 </motion.div>
               </div>
             </motion.div>
           </div>
         </div>
 
-        <div className="w-full overflow-hidden mb-8">
-          <img
-            src="/coursedetailbanner.png"
-            alt="Course Detail Banner"
-            className="w-full h-auto object-cover max-h-[300px]"
-          />
-        </div>
-
         {/* Course Content */}
         <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex flex-col md:flex-row gap-8">
             {/* Main Content */}
-            <div className="lg:w-2/3">
+            <div className="md:w-2/3">
               {/* Tabs */}
-              <motion.div
-                className="bg-white rounded-xl shadow-md mb-8 overflow-hidden"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                <div className="flex overflow-x-auto scrollbar-hide">
+              <div className="border-b border-gray-200 mb-8">
+                <div className="flex space-x-8">
                   <button
-                    className={`px-6 py-4 font-medium text-sm transition-colors whitespace-nowrap ${
+                    className={`pb-4 px-2 font-medium text-lg transition-colors relative ${
                       activeTab === "overview"
-                        ? "text-blue-600 border-b-2 border-blue-600"
-                        : "text-gray-600 hover:text-blue-600"
+                        ? "text-gray-900"
+                        : "text-gray-500 hover:text-gray-800"
                     }`}
                     onClick={() => setActiveTab("overview")}
-                    onMouseEnter={() => setCursorVariant("hover")}
-                    onMouseLeave={() => setCursorVariant("default")}
                   >
                     Overview
-                  </button>
-                  <button
-                    className={`px-6 py-4 font-medium text-sm transition-colors whitespace-nowrap ${
-                      activeTab === "curriculum"
-                        ? "text-blue-600 border-b-2 border-blue-600"
-                        : "text-gray-600 hover:text-blue-600"
-                    }`}
-                    onClick={() => setActiveTab("curriculum")}
-                    onMouseEnter={() => setCursorVariant("hover")}
-                    onMouseLeave={() => setCursorVariant("default")}
-                  >
-                    Curriculum
-                  </button>
-                  <button
-                    className={`px-6 py-4 font-medium text-sm transition-colors whitespace-nowrap ${
-                      activeTab === "instructor"
-                        ? "text-blue-600 border-b-2 border-blue-600"
-                        : "text-gray-600 hover:text-blue-600"
-                    }`}
-                    onClick={() => setActiveTab("instructor")}
-                    onMouseEnter={() => setCursorVariant("hover")}
-                    onMouseLeave={() => setCursorVariant("default")}
-                  >
-                    Instructor
-                  </button>
-                  <button
-                    className={`px-6 py-4 font-medium text-sm transition-colors whitespace-nowrap ${
-                      activeTab === "reviews"
-                        ? "text-blue-600 border-b-2 border-blue-600"
-                        : "text-gray-600 hover:text-blue-600"
-                    }`}
-                    onClick={() => setActiveTab("reviews")}
-                    onMouseEnter={() => setCursorVariant("hover")}
-                    onMouseLeave={() => setCursorVariant("default")}
-                  >
-                    Reviews
-                  </button>
-                </div>
-
-                <div className="p-6">
-                  <AnimatePresence mode="wait">
                     {activeTab === "overview" && (
                       <motion.div
-                        key="overview"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <h2 className="text-2xl font-bold mb-4">
-                          About This Course
-                        </h2>
-                        <p className="text-gray-700 mb-6 leading-relaxed">
-                          {course.longDescription}
-                        </p>
-
-                        <h3 className="text-xl font-bold mb-3">
-                          What You'll Learn
-                        </h3>
-                        <div className="grid md:grid-cols-2 gap-3 mb-6">
-                          {course.curriculum
-                            .flatMap((module) => module.lessons)
-                            .slice(0, 8)
-                            .map((lesson, index) => (
-                              <div key={index} className="flex items-start">
-                                <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                                <span className="text-gray-700">{lesson}</span>
-                              </div>
-                            ))}
-                        </div>
-
-                        <h3 className="text-xl font-bold mb-3">
-                          Course Features
-                        </h3>
-                        <div className="grid md:grid-cols-2 gap-3 mb-6">
-                          {course.features.map((feature, index) => (
-                            <div key={index} className="flex items-start">
-                              <CheckCircle className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" />
-                              <span className="text-gray-700">{feature}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </motion.div>
+                        className="absolute bottom-0 left-0 w-full h-0.5 bg-[#2196F3]"
+                        layoutId="tabIndicator"
+                      />
                     )}
-
+                  </button>
+                  <button
+                    className={`pb-4 px-2 font-medium text-lg transition-colors relative ${
+                      activeTab === "curriculum"
+                        ? "text-gray-900"
+                        : "text-gray-500 hover:text-gray-800"
+                    }`}
+                    onClick={() => setActiveTab("curriculum")}
+                  >
+                    Curriculum
                     {activeTab === "curriculum" && (
                       <motion.div
-                        key="curriculum"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
+                        className="absolute bottom-0 left-0 w-full h-0.5 bg-[#2196F3]"
+                        layoutId="tabIndicator"
+                      />
+                    )}
+                  </button>
+                  <button
+                    className={`pb-4 px-2 font-medium text-lg transition-colors relative ${
+                      activeTab === "features"
+                        ? "text-gray-900"
+                        : "text-gray-500 hover:text-gray-800"
+                    }`}
+                    onClick={() => setActiveTab("features")}
+                  >
+                    Features
+                    {activeTab === "features" && (
+                      <motion.div
+                        className="absolute bottom-0 left-0 w-full h-0.5 bg-[#2196F3]"
+                        layoutId="tabIndicator"
+                      />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Tab Content */}
+              <AnimatePresence mode="wait">
+                {activeTab === "overview" && (
+                  <motion.div
+                    key="overview"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <h2 className="text-2xl font-bold mb-4">Course Overview</h2>
+                    <div className="prose max-w-none">
+                      <p className="text-gray-700 mb-6 leading-relaxed">
+                        {course.longDescription}
+                      </p>
+                      <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                        What You'll Learn
+                      </h3>
+                      <motion.ul
+                        className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
                       >
-                        <h2 className="text-2xl font-bold mb-4">
-                          Course Curriculum
-                        </h2>
-                        <p className="text-gray-700 mb-6">
-                          This course includes {course.curriculum.length}{" "}
-                          modules with{" "}
+                        {course.curriculum[0].lessons.map((lesson, idx) => (
+                          <motion.li
+                            key={idx}
+                            className="flex items-start bg-gray-50 p-3 rounded-md shadow-sm"
+                            variants={itemVariants}
+                          >
+                            <CheckCircle className="h-5 w-5 text-[#2196F3] mr-3 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-700">{lesson}</span>
+                          </motion.li>
+                        ))}
+                      </motion.ul>
+                      {/* Added Instructor Bio section within Overview */}
+                      {course.instructor && (
+                        <div className="mt-6">
+                          <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                            Instructor Bio
+                          </h3>
+                          <p className="text-gray-700 leading-relaxed">
+                            {course.instructor.bio}
+                          </p>
+                        </div>
+                      )}
+                      <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                        Requirements
+                      </h3>
+                      <ul className="list-disc pl-6 mb-8 space-y-2 text-gray-700">
+                        <li>Basic understanding of the subject area</li>
+                        <li>Willingness to learn and practice</li>
+                        <li>Access to a computer with internet connection</li>
+                        <li>Dedication to complete assignments and projects</li>
+                      </ul>
+                      <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                        Target Audience
+                      </h3>
+                      <ul className="list-disc pl-6 mb-8 space-y-2 text-gray-700">
+                        <li>
+                          Students looking to enhance their knowledge in{" "}
+                          {course.category}
+                        </li>
+                        <li>
+                          Professionals wanting to upgrade their skills and
+                          advance their career
+                        </li>
+                        <li>
+                          Anyone interested in {course.category.toLowerCase()}{" "}
+                          fundamentals and applications
+                        </li>
+                        <li>
+                          Self-learners who prefer a structured learning
+                          approach
+                        </li>
+                      </ul>
+                    </div>
+                  </motion.div>
+                )}
+
+                {activeTab === "curriculum" && (
+                  <motion.div
+                    key="curriculum"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-2xl font-bold text-gray-800">
+                        Course Curriculum
+                      </h2>
+                      <div className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                        <span>
                           {course.curriculum.reduce(
                             (total, module) => total + module.lessons.length,
                             0
                           )}{" "}
-                          lessons.
-                        </p>
+                          lessons
+                        </span>
+                        <span className="mx-2">•</span>
+                        <span>{course.duration} total</span>
+                      </div>
+                    </div>
 
-                        <div className="space-y-4">
-                          {course.curriculum.map((module, moduleIndex) => (
+                    <div className="divide-y divide-gray-200">
+                      {course.curriculum.map((module, moduleIndex) => (
+                        <motion.div
+                          key={moduleIndex}
+                          className="py-4"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: moduleIndex * 0.1 }}
+                        >
+                          <button
+                            className="w-full flex justify-between items-center text-left group"
+                            onClick={() => toggleModule(moduleIndex)}
+                          >
+                            <div className="flex items-center">
+                              <div className="h-10 w-10 rounded-full bg-[#F5F5F5] flex items-center justify-center mr-3 text-[#2196F3] group-hover:bg-[#2196F3] group-hover:text-white transition-colors duration-300">
+                                <BookOpen className="h-5 w-5" />
+                              </div>
+                              <h3 className="text-lg font-medium text-gray-800">
+                                Module {moduleIndex + 1}:{" "}
+                                {module.title || "Course Module"}
+                              </h3>
+                            </div>
+                            <div className="flex items-center">
+                              <span className="text-sm text-gray-600 mr-3 px-2 py-1 bg-gray-100 rounded-full">
+                                {module.lessons.length} lessons
+                              </span>
+                              <motion.div
+                                animate={{
+                                  rotate: expandedModules[moduleIndex]
+                                    ? 180
+                                    : 0,
+                                }}
+                                transition={{ duration: 0.3 }}
+                                className="bg-gray-100 h-8 w-8 rounded-full flex items-center justify-center text-[#2196F3]"
+                              >
+                                <ChevronDown className="h-5 w-5" />
+                              </motion.div>
+                            </div>
+                          </button>
+
+                          <AnimatePresence>
+                            {expandedModules[moduleIndex] && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{
+                                  duration: 0.3,
+                                  ease: "easeInOut",
+                                }}
+                                className="overflow-hidden"
+                              >
+                                <ul className="mt-4 pl-14 space-y-3">
+                                  {module.lessons.map((lesson, lessonIndex) => (
+                                    <motion.li
+                                      key={lessonIndex}
+                                      initial={{ opacity: 0, x: -10 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      transition={{ delay: lessonIndex * 0.05 }}
+                                      className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-50 text-gray-700 transition-colors border border-gray-100 shadow-sm"
+                                    >
+                                      <div className="h-8 w-8 rounded-full bg-[#F5F5F5] flex items-center justify-center mr-3 text-[#2196F3]">
+                                        <Play className="h-4 w-4" />
+                                      </div>
+                                      <span className="font-medium">
+                                        {lesson}
+                                      </span>
+                                    </motion.li>
+                                  ))}
+                                </ul>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+
+                {activeTab === "features" && (
+                  <motion.div
+                    key="features"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <h2 className="text-2xl font-bold mb-6 text-gray-800">
+                      Course Features
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      {course.features
+                        ? course.features.map((feature, idx) => (
                             <motion.div
-                              key={moduleIndex}
-                              className="border border-gray-200 rounded-lg overflow-hidden"
+                              key={idx}
+                              className="flex items-start p-5 bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 group"
                               initial={{ opacity: 0, y: 20 }}
                               animate={{ opacity: 1, y: 0 }}
-                              transition={{
-                                delay: moduleIndex * 0.1,
-                                duration: 0.5,
+                              transition={{ delay: idx * 0.1 }}
+                              whileHover={{
+                                y: -5,
+                                transition: { duration: 0.2 },
                               }}
                             >
-                              <button
-                                className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
-                                onClick={() => toggleModule(moduleIndex)}
-                                onMouseEnter={() => setCursorVariant("hover")}
-                                onMouseLeave={() => setCursorVariant("default")}
-                              >
-                                <div className="flex items-center">
-                                  <BookOpen className="h-5 w-5 text-blue-600 mr-2" />
-                                  <span className="font-medium">
-                                    {module.title}
-                                  </span>
-                                </div>
-                                <div className="flex items-center">
-                                  <span className="text-sm text-gray-500 mr-2">
-                                    {module.lessons.length} lessons
-                                  </span>
-                                  {expandedModules[moduleIndex] ? (
-                                    <ChevronUp className="h-5 w-5 text-gray-500" />
-                                  ) : (
-                                    <ChevronDown className="h-5 w-5 text-gray-500" />
-                                  )}
-                                </div>
-                              </button>
-
-                              <AnimatePresence>
-                                {expandedModules[moduleIndex] && (
-                                  <motion.div
-                                    initial={{ height: 0, opacity: 0 }}
-                                    animate={{ height: "auto", opacity: 1 }}
-                                    exit={{ height: 0, opacity: 0 }}
-                                    transition={{ duration: 0.3 }}
-                                  >
-                                    <div className="border-t border-gray-200">
-                                      {module.lessons.map(
-                                        (lesson, lessonIndex) => (
-                                          <motion.div
-                                            key={lessonIndex}
-                                            className="flex items-center p-4 hover:bg-gray-50 transition-colors border-b border-gray-200 last:border-b-0"
-                                            initial={{ opacity: 0, x: -10 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{
-                                              delay: lessonIndex * 0.05,
-                                              duration: 0.3,
-                                            }}
-                                          >
-                                            <Play className="h-4 w-4 text-gray-400 mr-3" />
-                                            <span className="text-gray-700">
-                                              {lesson}
-                                            </span>
-                                          </motion.div>
-                                        )
-                                      )}
-                                    </div>
-                                  </motion.div>
-                                )}
-                              </AnimatePresence>
+                              <div className="rounded-full bg-[#F5F5F5] p-3 mr-4 text-[#2196F3] group-hover:bg-[#2196F3] group-hover:text-white transition-colors duration-300">
+                                <CheckCircle className="h-5 w-5" />
+                              </div>
+                              <div>
+                                <h3 className="font-semibold mb-2 text-gray-800 group-hover:text-[#2196F3] transition-colors duration-300">
+                                  {feature}
+                                </h3>
+                                <p className="text-sm text-gray-600 leading-relaxed">
+                                  Enhance your learning experience with
+                                  professionally designed interactive resources.
+                                </p>
+                              </div>
                             </motion.div>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-
-                    {activeTab === "instructor" && (
-                      <motion.div
-                        key="instructor"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <h2 className="text-2xl font-bold mb-4">
-                          Meet Your Instructor
-                        </h2>
-
-                        <div className="flex flex-col md:flex-row items-start gap-6 mb-6">
-                          <motion.img
-                            src={course.instructor.image || "/placeholder.svg"}
-                            alt={course.instructor.name}
-                            className="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.5 }}
-                            whileHover={{ scale: 1.05 }}
-                          />
-
-                          <div>
-                            <h3 className="text-xl font-bold mb-1">
-                              {course.instructor.name}
-                            </h3>
-                            <div className="flex items-center mb-3">
-                              <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                              <span className="ml-1 font-medium">
-                                {course.instructor.rating} Instructor Rating
-                              </span>
-                            </div>
-                            <p className="text-gray-700 mb-4">
-                              {course.instructor.bio}
-                            </p>
-
-                            <div className="flex items-center text-sm text-gray-600">
-                              <Users className="h-4 w-4 mr-1" />
-                              <span>
-                                {course.studentsEnrolled.toLocaleString()}{" "}
-                                Students
-                              </span>
-                              <span className="mx-2">•</span>
-                              <Award className="h-4 w-4 mr-1" />
-                              <span>{course.curriculum.length} Courses</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                          <h3 className="text-lg font-bold mb-3">
-                            Instructor's Expertise
-                          </h3>
-                          <p className="text-gray-700 mb-4">
-                            With years of experience in teaching and industry
-                            practice, {course.instructor.name} brings real-world
-                            knowledge and practical insights to this course.
-                            Their teaching methodology focuses on hands-on
-                            learning and practical applications to ensure
-                            students gain valuable skills they can apply
-                            immediately.
-                          </p>
-                          <motion.button
-                            className="text-blue-600 font-medium hover:text-blue-800 transition-colors"
-                            onMouseEnter={() => setCursorVariant("hover")}
-                            onMouseLeave={() => setCursorVariant("default")}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            View Full Profile
-                          </motion.button>
-                        </div>
-                      </motion.div>
-                    )}
-
-                    {activeTab === "reviews" && (
-                      <motion.div
-                        key="reviews"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                        variants={containerVariants}
-                      >
-                        <h2 className="text-2xl font-bold mb-4">
-                          Student Reviews
-                        </h2>
-
-                        <div className="flex flex-col md:flex-row items-center justify-between mb-8 p-6 bg-gray-50 rounded-lg">
-                          <div className="text-center md:text-left mb-4 md:mb-0">
-                            <div className="text-5xl font-bold text-blue-600">
-                              {course.rating}
-                            </div>
-                            <div className="flex items-center justify-center md:justify-start mt-2">
-                              {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`h-5 w-5 ${
-                                    i < Math.floor(course.rating)
-                                      ? "text-yellow-400 fill-current"
-                                      : "text-gray-300"
-                                  }`}
-                                />
-                              ))}
-                            </div>
-                            <div className="text-sm text-gray-600 mt-1">
-                              Course Rating
-                            </div>
-                          </div>
-
-                          <div className="w-full md:w-2/3">
-                            <div className="space-y-2">
-                              {[5, 4, 3, 2, 1].map((rating) => {
-                                // Simulate rating distribution
-                                const percentage =
-                                  rating === 5
-                                    ? 70
-                                    : rating === 4
-                                    ? 20
-                                    : rating === 3
-                                    ? 7
-                                    : rating === 2
-                                    ? 2
-                                    : 1;
-                                return (
-                                  <motion.div
-                                    key={rating}
-                                    className="flex items-center"
-                                    variants={itemVariants}
-                                  >
-                                    <div className="flex items-center w-20">
-                                      <span className="text-sm font-medium mr-2">
-                                        {rating}
-                                      </span>
-                                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                                    </div>
-                                    <div className="w-full bg-gray-200 rounded-full h-2.5 ml-2">
-                                      <motion.div
-                                        className="bg-blue-600 h-2.5 rounded-full"
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${percentage}%` }}
-                                        transition={{
-                                          duration: 0.8,
-                                          delay: 0.2,
-                                        }}
-                                      ></motion.div>
-                                    </div>
-                                    <span className="text-sm text-gray-600 ml-2 w-12">
-                                      {percentage}%
-                                    </span>
-                                  </motion.div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="space-y-6">
-                          {course.testimonials.map((testimonial, index) => (
+                          ))
+                        : [
+                            "HD Video Content",
+                            "Downloadable Resources",
+                            "Direct Instructor Access",
+                            "Self-Paced Learning",
+                            "Certificate of Completion",
+                            "Lifetime Access",
+                            "Practice Exercises",
+                            "Mobile Access",
+                          ].map((feature, idx) => (
                             <motion.div
-                              key={index}
-                              className="border-b border-gray-200 pb-6 last:border-b-0"
-                              variants={itemVariants}
+                              key={idx}
+                              className="flex items-start p-5 bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 group"
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: idx * 0.1 }}
+                              whileHover={{
+                                y: -5,
+                                transition: { duration: 0.2 },
+                              }}
                             >
-                              <div className="flex items-start">
-                                <img
-                                  src={testimonial.image || "/placeholder.svg"}
-                                  alt={testimonial.name}
-                                  className="w-12 h-12 rounded-full object-cover mr-4"
-                                />
-                                <div>
-                                  <h4 className="font-bold">
-                                    {testimonial.name}
-                                  </h4>
-                                  <div className="flex items-center mt-1 mb-2">
-                                    {[...Array(5)].map((_, i) => (
-                                      <Star
-                                        key={i}
-                                        className={`h-4 w-4 ${
-                                          i < Math.floor(testimonial.rating)
-                                            ? "text-yellow-400 fill-current"
-                                            : "text-gray-300"
-                                        }`}
-                                      />
-                                    ))}
-                                    <span className="text-sm text-gray-600 ml-2">
-                                      1 month ago
-                                    </span>
-                                  </div>
-                                  <p className="text-gray-700">
-                                    {testimonial.text}
-                                  </p>
-
-                                  <div className="flex items-center mt-3 text-sm">
-                                    <button className="text-gray-500 hover:text-blue-600 transition-colors flex items-center">
-                                      <MessageCircle className="h-4 w-4 mr-1" />
-                                      Reply
-                                    </button>
-                                    <span className="mx-2 text-gray-300">
-                                      |
-                                    </span>
-                                    <button className="text-gray-500 hover:text-blue-600 transition-colors">
-                                      Helpful
-                                    </button>
-                                  </div>
-                                </div>
+                              <div className="rounded-full bg-[#F5F5F5] p-3 mr-4 text-[#2196F3] group-hover:bg-[#2196F3] group-hover:text-white transition-colors duration-300">
+                                <CheckCircle className="h-5 w-5" />
+                              </div>
+                              <div>
+                                <h3 className="font-semibold mb-2 text-gray-800 group-hover:text-[#2196F3] transition-colors duration-300">
+                                  {feature}
+                                </h3>
+                                <p className="text-sm text-gray-600 leading-relaxed">
+                                  Enhance your learning experience with
+                                  professionally designed interactive resources.
+                                </p>
                               </div>
                             </motion.div>
                           ))}
-                        </div>
-
-                        <div className="mt-6 text-center">
-                          <motion.button
-                            className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition-colors"
-                            onMouseEnter={() => setCursorVariant("hover")}
-                            onMouseLeave={() => setCursorVariant("default")}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            View All Reviews
-                          </motion.button>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </motion.div>
-
-              {/* Related Courses */}
-              {relatedCourses.length > 0 && (
-                <motion.div
-                  className="bg-white rounded-xl shadow-md p-6 mb-8"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                >
-                  <h3 className="text-xl font-bold mb-4">Related Courses</h3>
-                  <div className="grid md:grid-cols-3 gap-4">
-                    {relatedCourses.map((relatedCourse, index) => (
-                      <motion.div
-                        key={relatedCourse.id}
-                        className="bg-gray-50 rounded-lg overflow-hidden hover:shadow-md transition-all duration-300"
-                        whileHover={{ y: -5 }}
-                        variants={itemVariants}
-                      >
-                        <img
-                          src={relatedCourse.image || "/placeholder.svg"}
-                          alt={relatedCourse.title}
-                          className="w-full h-32 object-cover"
-                        />
-                        <div className="p-4">
-                          <h4 className="font-bold text-sm mb-1 line-clamp-1">
-                            {relatedCourse.title}
-                          </h4>
-                          <div className="flex items-center text-xs text-gray-500 mb-2">
-                            <Star className="h-3 w-3 text-yellow-400 fill-current" />
-                            <span className="ml-1">{relatedCourse.rating}</span>
-                            <span className="mx-1">•</span>
-                            <span>
-                              {relatedCourse.studentsEnrolled} students
-                            </span>
-                          </div>
-                          <Link
-                            to={`/courses/${relatedCourse.id}`}
-                            className={`text-transparent bg-clip-text bg-gradient-to-r ${relatedCourse.gradient} text-sm font-medium hover:opacity-80 transition-colors`}
-                          >
-                            View Course
-                          </Link>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Sidebar */}
-            <div className="lg:w-1/3">
+            <div className="md:w-1/3 mt-8 md:mt-0">
               <motion.div
-                className="bg-white rounded-xl shadow-md p-6 sticky top-24"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
+                className="bg-white rounded-xl p-6 sticky top-24 border border-gray-100 shadow-md"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
               >
-                <h3 className="text-xl font-bold mb-4">Course Information</h3>
-
-                <div className="space-y-4 mb-6">
-                  <div className="flex items-start">
-                    <Calendar className="h-5 w-5 text-blue-600 mr-3 mt-0.5" />
-                    <div>
-                      <h4 className="font-medium">Duration</h4>
-                      <p className="text-gray-600">{course.duration}</p>
-                    </div>
+                <h3 className="text-xl font-bold mb-6 text-gray-800">
+                  Course Information
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center pb-3 border-b border-gray-200">
+                    <span className="text-gray-600">Enrollment Status</span>
+                    <span className="text-gray-900 font-medium px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm">
+                      {course.status}
+                    </span>
                   </div>
-
-                  <div className="flex items-start">
-                    <Users className="h-5 w-5 text-blue-600 mr-3 mt-0.5" />
-                    <div>
-                      <h4 className="font-medium">Batch Size</h4>
-                      <p className="text-gray-600">{course.batchSize}</p>
-                    </div>
+                  <div className="flex justify-between items-center pb-3 border-b border-gray-200">
+                    <span className="text-gray-600">Category</span>
+                    <span className="text-gray-900 font-medium">
+                      {course.category}
+                    </span>
                   </div>
-
-                  <div className="flex items-start">
-                    <Clock className="h-5 w-5 text-blue-600 mr-3 mt-0.5" />
-                    <div>
-                      <h4 className="font-medium">Access</h4>
-                      <p className="text-gray-600">{course.validity}</p>
-                    </div>
+                  <div className="flex justify-between items-center pb-3 border-b border-gray-200">
+                    <span className="text-gray-600">Level</span>
+                    <span className="text-gray-900 font-medium">
+                      {course.level}
+                    </span>
                   </div>
-
-                  <div className="flex items-start">
-                    <BookOpen className="h-5 w-5 text-blue-600 mr-3 mt-0.5" />
-                    <div>
-                      <h4 className="font-medium">Lessons</h4>
-                      <p className="text-gray-600">
-                        {course.curriculum.reduce(
-                          (total, module) => total + module.lessons.length,
-                          0
-                        )}{" "}
-                        lessons in {course.curriculum.length} modules
-                      </p>
+                  <div className="flex justify-between items-center pb-3 border-b border-gray-200">
+                    <span className="text-gray-600">Duration</span>
+                    <span className="text-gray-900 font-medium">
+                      {course.duration}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center pb-3 border-b border-gray-200">
+                    <span className="text-gray-600">Enrolled Students</span>
+                    <span className="text-gray-900 font-medium">
+                      {course.studentsEnrolled.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Rating</span>
+                    <div className="flex items-center bg-yellow-50 px-2 py-1 rounded-full">
+                      <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                      <span className="ml-1 text-gray-900 font-medium">
+                        {course.rating}
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-gray-200 pt-6 mb-6">
-                  <h3 className="text-lg font-bold mb-3">
-                    This course includes:
-                  </h3>
-                  <ul className="space-y-2">
-                    {course.features.map((feature, index) => (
-                      <li key={index} className="flex items-center">
-                        <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-                        <span className="text-gray-700">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="flex flex-col space-y-3">
-                  <motion.button
-                    className={`w-full py-3 px-6 bg-gradient-to-r ${course.gradient} text-white rounded-md font-bold text-lg hover:shadow-lg transition-colors flex items-center justify-center`}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.98 }}
-                    onMouseEnter={() => setCursorVariant("hover")}
-                    onMouseLeave={() => setCursorVariant("default")}
-                    onClick={handleEnrollNow}
+                <div className="mt-8">
+                  <motion.div
+                    className="mb-4"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
                   >
-                    <ShoppingCart className="h-5 w-5 mr-2" />
-                    Enroll Now
-                  </motion.button>
-
-                  <div className="flex gap-2">
                     <motion.button
-                      className="flex-1 py-2 px-4 border border-black text-white bg-black rounded-md font-medium hover:bg-opacity-80 transition-colors flex items-center justify-center"
-                      whileHover={{ scale: 1.03, cursor: "pointer" }}
+                      className="w-full py-3 px-6 bg-[#2196F3] text-white rounded-md font-bold text-lg hover:bg-[#1976D2] transition-colors flex items-center justify-center shadow-md shadow-blue-100"
+                      whileHover={{
+                        scale: 1.03,
+                        boxShadow: "0 10px 15px -3px rgba(33, 150, 243, 0.3)",
+                      }}
                       whileTap={{ scale: 0.98 }}
-                      onMouseEnter={() => setCursorVariant("hover")}
-                      onMouseLeave={() => setCursorVariant("default")}
                     >
-                      <Download className="h-4 w-4 mr-2" />
-                      Syllabus
+                      <svg
+                        className="w-5 h-5 mr-2"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M12 18.5L11.5 18H4.5C3.95 18 3.45 17.78 3.09 17.41C2.72 17.05 2.5 16.55 2.5 16V5C2.5 4.45 2.72 3.95 3.09 3.59C3.45 3.22 3.95 3 4.5 3H19.5C20.05 3 20.55 3.22 20.91 3.59C21.28 3.95 21.5 4.45 21.5 5V16C21.5 16.55 21.28 17.05 20.91 17.41C20.55 17.78 20.05 18 19.5 18H12.5L12 18.5Z"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M12 3V10L15 7"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M12 10L9 7"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      Enroll Now
                     </motion.button>
+                  </motion.div>
 
-                    <motion.button
-                      className="flex-1 py-2 px-4 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors flex items-center justify-center"
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.98 }}
-                      onMouseEnter={() => setCursorVariant("hover")}
-                      onMouseLeave={() => setCursorVariant("default")}
-                      onClick={() => setShowShareOptions(!showShareOptions)}
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                  >
+                    <button className="w-full py-3 px-6 bg-transparent border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 mr-2"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      Add to Wishlist
+                    </button>
+                  </motion.div>
+
+                  <motion.div
+                    className="flex items-center justify-center mt-6 text-sm text-gray-500"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.7 }}
+                  >
+                    <svg
+                      className="w-5 h-5 mr-2 text-green-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      <Share2 className="h-4 w-4 mr-2" />
-                      Share
-                    </motion.button>
-                  </div>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                      />
+                    </svg>
+                    <span>30-Day Money-Back Guarantee</span>
+                  </motion.div>
                 </div>
               </motion.div>
             </div>
           </div>
         </div>
       </motion.div>
-      <Footer setCursorVariant={setCursorVariant} />
+      <Footer />
     </>
   );
 };
