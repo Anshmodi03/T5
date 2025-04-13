@@ -1,9 +1,413 @@
 // Header.jsx
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, ChevronDown, ChevronRight } from "lucide-react";
+import {
+  Menu,
+  X,
+  User,
+  ChevronDown,
+  ChevronRight,
+  Settings,
+  LogOut,
+  LayoutDashboard,
+  Shield,
+} from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+
+const AccountSection = () => {
+  const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
+  const accountDropdownRef = useRef(null);
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        accountDropdownRef.current &&
+        !accountDropdownRef.current.contains(event.target)
+      ) {
+        setIsAccountDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Handle logout click
+  const handleLogout = async () => {
+    await logout();
+    setIsAccountDropdownOpen(false);
+    navigate("/");
+  };
+
+  // Use the user's name if available; fallback to "Account"
+  const accountDisplay = user && user.name ? user.name : "Account";
+  const userEmail = user && user.email ? user.email : "";
+
+  // Enhanced animation variants for the account button
+  const buttonVariants = {
+    initial: { scale: 1, boxShadow: "0 4px 20px rgba(0, 0, 0, 0.25)" },
+    hover: {
+      scale: 1.05,
+      boxShadow: "0 10px 30px rgba(0, 0, 0, 0.4)",
+      transition: { type: "spring", stiffness: 500, damping: 15 },
+    },
+    tap: {
+      scale: 0.95,
+      transition: { type: "spring", stiffness: 500, damping: 17 },
+    },
+  };
+
+  // Enhanced animation variants for the dropdown
+  const dropdownVariants = {
+    hidden: {
+      opacity: 0,
+      y: -5,
+      scale: 0.95,
+      transition: { type: "spring", stiffness: 500, damping: 30 },
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 500,
+        damping: 20,
+        staggerChildren: 0.08,
+      },
+    },
+  };
+
+  // Enhanced animation variants for dropdown items
+  const itemVariants = {
+    hidden: { opacity: 0, x: -20, filter: "blur(8px)" },
+    visible: {
+      opacity: 1,
+      x: 0,
+      filter: "blur(0px)",
+      transition: { type: "spring", stiffness: 400, damping: 22 },
+    },
+  };
+
+  // New ripple animation for menu item hover
+  const rippleVariants = {
+    initial: { scale: 0, opacity: 0.5 },
+    animate: {
+      scale: 1.5,
+      opacity: 0,
+      transition: { duration: 0.7, ease: "easeOut" },
+    },
+  };
+
+  // Non-authenticated view remains on click (redirect to /auth).
+  if (!user) {
+    return (
+      <motion.button
+        initial="initial"
+        whileHover="hover"
+        whileTap="tap"
+        variants={buttonVariants}
+        onClick={() => navigate("/auth")}
+        className="relative flex items-center gap-3 px-5 py-2.5 rounded-xl bg-black border border-white/20 hover:border-white/40 shadow-lg transition-all duration-300 group overflow-hidden"
+      >
+        <motion.div
+          className="absolute inset-0 bg-white/5"
+          initial={{ opacity: 0 }}
+          whileHover={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        />
+        <motion.div
+          className="relative w-9 h-9 rounded-full bg-white/10 flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)] overflow-hidden z-10"
+          whileHover={{
+            scale: 1.15,
+            boxShadow: "0 0 20px rgba(255,255,255,0.2)",
+          }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        >
+          <User className="w-5 h-5 text-white" />
+        </motion.div>
+        <span className="font-medium text-white group-hover:text-white transition-colors text-sm z-10">
+          Account
+        </span>
+        <motion.div
+          animate={{ rotate: 0, y: 0 }}
+          transition={{ duration: 0.3, type: "spring", stiffness: 200 }}
+          className="z-10"
+        >
+          <ChevronDown className="w-4 h-4 text-white/70 group-hover:text-white" />
+        </motion.div>
+      </motion.button>
+    );
+  }
+
+  // Authenticated view now opens on hover.
+  return (
+    <div
+      className="relative ml-4"
+      ref={accountDropdownRef}
+      onMouseEnter={() => setIsAccountDropdownOpen(true)}
+      onMouseLeave={() => setIsAccountDropdownOpen(false)}
+    >
+      {/* Enhanced Account Button without onClick since dropdown opens on hover */}
+      <motion.button
+        initial="initial"
+        whileHover="hover"
+        whileTap="tap"
+        variants={buttonVariants}
+        className="relative flex items-center gap-3 px-5 py-2.5 rounded-xl bg-black border border-white/20 hover:border-white/40 shadow-lg transition-all duration-300 group overflow-hidden"
+        aria-expanded={isAccountDropdownOpen}
+        aria-haspopup="true"
+      >
+        <motion.div
+          className="absolute inset-0 bg-white/5"
+          initial={{ opacity: 0 }}
+          whileHover={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        />
+        <motion.div
+          className="relative w-9 h-9 rounded-full bg-white/10 flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)] overflow-hidden z-10"
+          whileHover={{
+            scale: 1.15,
+            boxShadow: "0 0 20px rgba(255,255,255,0.2)",
+          }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        >
+          <User className="w-5 h-5 text-white" />
+          <motion.div
+            className="absolute inset-0 bg-white/10 rounded-full"
+            animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
+            transition={{
+              duration: 2.5,
+              repeat: Infinity,
+              repeatType: "loop",
+              ease: "easeInOut",
+            }}
+          />
+        </motion.div>
+        <span className="font-medium text-white group-hover:text-white transition-colors text-sm z-10">
+          {accountDisplay}
+        </span>
+        <motion.div
+          animate={{
+            rotate: isAccountDropdownOpen ? 180 : 0,
+            y: isAccountDropdownOpen ? 2 : 0,
+          }}
+          transition={{ duration: 0.3, type: "spring", stiffness: 200 }}
+          className="z-10"
+        >
+          <ChevronDown className="w-4 h-4 text-white/70 group-hover:text-white" />
+        </motion.div>
+        {user && (
+          <motion.span
+            className="absolute top-0 right-0 w-3 h-3 bg-green-300 rounded-full border-2 border-black/80"
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [1, 0.7, 1],
+              boxShadow: [
+                "0 0 0px rgba(255, 255, 255, 0.2)",
+                "0 0 10px rgba(255, 255, 255, 0.4)",
+                "0 0 0px rgba(255, 255, 255, 0.2)",
+              ],
+            }}
+            transition={{ duration: 3, repeat: Infinity, repeatType: "loop" }}
+          />
+        )}
+      </motion.button>
+
+      {/* Enhanced Dropdown Menu */}
+      <AnimatePresence>
+        {isAccountDropdownOpen && (
+          <motion.div
+            className="absolute right-0 mt-3 w-72 rounded-xl bg-black backdrop-blur-lg border border-white/20 shadow-[0_10px_40px_-5px_rgba(0,0,0,0.5)] overflow-hidden z-50"
+            variants={dropdownVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            aria-labelledby="accountButton"
+          >
+            {/* Enhanced User Profile Section */}
+            {user && (
+              <motion.div
+                className="p-5 border-b border-white/10 bg-white/5"
+                variants={itemVariants}
+              >
+                <div className="flex items-center gap-4">
+                  <motion.div
+                    className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center shadow-lg overflow-hidden"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <User className="w-8 h-8 text-white" />
+                    <motion.div
+                      className="absolute inset-0 bg-white/10"
+                      animate={{ scale: [1, 1.2, 1], opacity: [0, 0.2, 0] }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        repeatType: "loop",
+                      }}
+                    />
+                  </motion.div>
+                  <div>
+                    <motion.p
+                      className="font-semibold text-white text-lg"
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                    >
+                      {accountDisplay}
+                    </motion.p>
+                    {userEmail && (
+                      <motion.p
+                        className="text-xs text-white/60 mt-0.5"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        {userEmail}
+                      </motion.p>
+                    )}
+                    {user && (
+                      <motion.div
+                        className="mt-2 flex items-center gap-1 bg-white/10 text-white/80 text-xs py-1 px-2 rounded-full w-fit"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.3, type: "spring" }}
+                      >
+                        <Shield size={10} />
+                        <span>Verified Account</span>
+                      </motion.div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Enhanced Menu Items */}
+            <div className="py-2">
+              {/* Profile Link */}
+              <motion.div variants={itemVariants} className="relative">
+                <Link
+                  to="/profile"
+                  className="flex items-center gap-3 px-5 py-3.5 text-sm text-white hover:bg-white/5 transition-colors group relative overflow-hidden"
+                  onClick={() => setIsAccountDropdownOpen(false)}
+                >
+                  <motion.div
+                    className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/15 transition-colors"
+                    whileHover={{ scale: 1.1 }}
+                  >
+                    <User className="w-5 h-5 text-white/80 group-hover:text-white" />
+                  </motion.div>
+                  <div className="flex flex-col">
+                    <span className="font-medium group-hover:text-white transition-colors">
+                      Profile
+                    </span>
+                    <span className="text-xs text-white/50 mt-0.5">
+                      View and edit your profile
+                    </span>
+                  </div>
+                  <motion.div
+                    className="absolute inset-0 bg-white/5 rounded-full pointer-events-none"
+                    initial="initial"
+                    whileHover="animate"
+                    variants={rippleVariants}
+                  />
+                </Link>
+              </motion.div>
+
+              {/* Settings Link */}
+              <motion.div variants={itemVariants} className="relative">
+                <Link
+                  to="/settings"
+                  className="flex items-center gap-3 px-5 py-3.5 text-sm text-white hover:bg-white/5 transition-colors group relative overflow-hidden"
+                  onClick={() => setIsAccountDropdownOpen(false)}
+                >
+                  <motion.div
+                    className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/15 transition-colors"
+                    whileHover={{ scale: 1.1 }}
+                  >
+                    <Settings className="w-5 h-5 text-white/80 group-hover:text-white" />
+                  </motion.div>
+                  <div className="flex flex-col">
+                    <span className="font-medium group-hover:text-white transition-colors">
+                      Settings
+                    </span>
+                    <span className="text-xs text-white/50 mt-0.5">
+                      Manage your preferences
+                    </span>
+                  </div>
+                  <motion.div
+                    className="absolute inset-0 bg-white/5 rounded-full pointer-events-none"
+                    initial="initial"
+                    whileHover="animate"
+                    variants={rippleVariants}
+                  />
+                </Link>
+              </motion.div>
+
+              {/* Dashboard Link */}
+              <motion.div variants={itemVariants} className="relative">
+                <Link
+                  to="/dashboard"
+                  className="flex items-center gap-3 px-5 py-3.5 text-sm text-white hover:bg-white/5 transition-colors group relative overflow-hidden"
+                  onClick={() => setIsAccountDropdownOpen(false)}
+                >
+                  <motion.div
+                    className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/15 transition-colors"
+                    whileHover={{ scale: 1.1 }}
+                  >
+                    <LayoutDashboard className="w-5 h-5 text-white/80 group-hover:text-white" />
+                  </motion.div>
+                  <div className="flex flex-col">
+                    <span className="font-medium group-hover:text-white transition-colors">
+                      Dashboard
+                    </span>
+                    <span className="text-xs text-white/50 mt-0.5">
+                      View your analytics
+                    </span>
+                  </div>
+                  <motion.div
+                    className="absolute inset-0 bg-white/5 rounded-full pointer-events-none"
+                    initial="initial"
+                    whileHover="animate"
+                    variants={rippleVariants}
+                  />
+                </Link>
+              </motion.div>
+
+              {/* Logout Button */}
+              <motion.div variants={itemVariants} className="px-4 py-3 mt-1">
+                <motion.button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 px-5 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors rounded-lg border border-white/10 bg-white/5 group"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <motion.div
+                    className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/15 transition-colors"
+                    whileHover={{ rotate: 10 }}
+                  >
+                    <LogOut className="w-5 h-5 text-white/80 group-hover:text-white" />
+                  </motion.div>
+                  <div className="flex flex-col items-start">
+                    <span className="font-medium">Logout</span>
+                    <span className="text-xs text-white/50 mt-0.5">
+                      End your session
+                    </span>
+                  </div>
+                </motion.button>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -11,33 +415,15 @@ const Header = () => {
   const [activeSection, setActiveSection] = useState("hero");
   const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
   const [showTeachersDropdown, setShowTeachersDropdown] = useState(false);
-  const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
 
   const location = useLocation();
   const pathname = location.pathname;
   const coursesDropdownRef = useRef(null);
   const teachersDropdownRef = useRef(null);
-  const accountDropdownRef = useRef(null);
   const headerRef = useRef(null);
 
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
-
-  // Custom animation variants for the account button
-  const accountButtonVariants = {
-    hidden: { opacity: 0, y: -10 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { type: "spring", stiffness: 300, damping: 20, delay: 0.2 },
-    },
-    hover: {
-      scale: 1.1,
-      boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)",
-      transition: { type: "spring", stiffness: 300, damping: 20 },
-    },
-    tap: { scale: 0.95 },
-  };
+  const { user } = useAuth();
 
   // Handle scroll to change header style and update active section.
   useEffect(() => {
@@ -58,7 +444,6 @@ const Header = () => {
       });
     };
 
-    // Close dropdowns on clicking outside
     const handleClickOutside = (event) => {
       if (
         coursesDropdownRef.current &&
@@ -71,12 +456,6 @@ const Header = () => {
         !teachersDropdownRef.current.contains(event.target)
       ) {
         setShowTeachersDropdown(false);
-      }
-      if (
-        accountDropdownRef.current &&
-        !accountDropdownRef.current.contains(event.target)
-      ) {
-        setIsAccountDropdownOpen(false);
       }
     };
 
@@ -145,11 +524,7 @@ const Header = () => {
       x: 0,
       transition: { type: "spring", stiffness: 300, damping: 24 },
     },
-    exit: {
-      opacity: 0,
-      x: -10,
-      transition: { duration: 0.2 },
-    },
+    exit: { opacity: 0, x: -10, transition: { duration: 0.2 } },
   };
 
   // Smooth scroll to section on click.
@@ -159,16 +534,6 @@ const Header = () => {
       section.scrollIntoView({ behavior: "smooth" });
     }
   };
-
-  // Handle logout click: call logout function from auth and navigate to home.
-  const handleLogout = async () => {
-    await logout();
-    setIsAccountDropdownOpen(false);
-    navigate("/");
-  };
-
-  // Use the user's name if available; fallback to a generic "Account" text.
-  const accountDisplay = user && user.name ? user.name : "Account";
 
   return (
     <>
@@ -351,75 +716,9 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Account Button (Desktop) with hover for dropdown */}
-          <div
-            className="hidden md:block relative"
-            ref={accountDropdownRef}
-            onMouseEnter={() => setIsAccountDropdownOpen(true)}
-            onMouseLeave={() => setIsAccountDropdownOpen(false)}
-          >
-            {user ? (
-              <>
-                <motion.button
-                  className="px-4 py-2 border border-white bg-black text-white rounded-md flex items-center gap-2"
-                  variants={accountButtonVariants}
-                  initial="hidden"
-                  animate="visible"
-                  whileHover="hover"
-                  whileTap="tap"
-                >
-                  <User className="h-4 w-4" />
-                  <span className="font-medium">{accountDisplay}</span>
-                  <ChevronDown
-                    className={`ml-1 h-4 w-4 transition-transform duration-300 ${
-                      isAccountDropdownOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </motion.button>
-                <AnimatePresence>
-                  {isAccountDropdownOpen && (
-                    <motion.div
-                      className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-black/95 ring-1 ring-white/20 z-50 overflow-hidden"
-                      variants={dropdownVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                    >
-                      <div className="py-1">
-                        <Link to="/profile">
-                          <motion.div
-                            variants={itemVariants}
-                            className="px-4 py-2 text-sm text-white hover:bg-white/10 cursor-pointer"
-                          >
-                            Profile
-                          </motion.div>
-                        </Link>
-                        <motion.div
-                          variants={itemVariants}
-                          className="px-4 py-2 text-sm text-white hover:bg-white/10 cursor-pointer"
-                          onClick={handleLogout}
-                        >
-                          Logout
-                        </motion.div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </>
-            ) : (
-              <motion.button
-                className="px-4 py-2 border border-white bg-black text-white rounded-md flex items-center gap-2"
-                variants={accountButtonVariants}
-                initial="hidden"
-                animate="visible"
-                whileHover="hover"
-                whileTap="tap"
-                onClick={() => navigate("/auth")}
-              >
-                <User className="h-4 w-4" />
-                Login/Signup
-              </motion.button>
-            )}
+          {/* Desktop Account Section (Enhanced Design with hover opening) */}
+          <div className="hidden md:block">
+            <AccountSection />
           </div>
 
           {/* Mobile menu button */}
@@ -485,7 +784,7 @@ const Header = () => {
                 {user ? (
                   <div className="space-y-2">
                     <div className="px-4 pb-2 text-white font-medium">
-                      Hi, {accountDisplay}
+                      Hi, {user.name ? user.name : "Account"}
                     </div>
                     <Link to="/profile">
                       <button
@@ -500,7 +799,10 @@ const Header = () => {
                       className="w-full py-2 px-4 bg-black text-white border border-white rounded-md font-medium flex items-center justify-center gap-2 hover:bg-gray-800"
                       onClick={() => {
                         setIsMenuOpen(false);
-                        handleLogout();
+                        (async () => {
+                          await logout();
+                          navigate("/");
+                        })();
                       }}
                     >
                       <User className="h-4 w-4" />

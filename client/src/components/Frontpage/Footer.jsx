@@ -94,20 +94,20 @@ const Footer = ({ setCursorVariant }) => {
 
   const footerLinks = {
     "Quick Links": [
-      { name: "Home", url: "#" },
-      { name: "About Us", url: "#" },
-      { name: "Courses", url: "#" },
-      { name: "Teachers", url: "#" },
-      { name: "Blog", url: "#" },
-      { name: "Contact", url: "#" },
+      { name: "Home", url: "/" },
+      { name: "About Us", url: "/about" },
+      { name: "Courses", url: "/courses" },
+      { name: "Teachers", url: "/teachers" },
+      { name: "Blog", url: "/blog" },
+      { name: "Contact", url: "/contact" },
     ],
     Services: [
-      { name: "E-Learning", url: "#" },
-      { name: "Certifications", url: "#" },
-      { name: "Workshops", url: "#" },
-      { name: "Webinars", url: "#" },
-      { name: "Career Guidance", url: "#" },
-      { name: "Mentorship", url: "#" },
+      { name: "E-Learning", url: "/e-learning" },
+      { name: "Certifications", url: "/certification" }, // Updated Certification link
+      { name: "Workshops", url: "/workshops" },
+      { name: "Webinars", url: "/webinars" },
+      { name: "Career Guidance", url: "/career-guidance" },
+      { name: "Mentorship", url: "/mentorship" },
     ],
   };
 
@@ -193,7 +193,7 @@ const Footer = ({ setCursorVariant }) => {
                 <motion.a
                   key={index}
                   href={link.url}
-                  className={`transition-colors text-white hover:text-gray-300`}
+                  className="transition-colors text-white hover:text-gray-300"
                   whileHover={{ scale: 1.2, cursor: "pointer" }}
                   whileTap={{ scale: 0.9 }}
                   onMouseEnter={() => setCursorVariant("hover")}
