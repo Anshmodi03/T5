@@ -19,6 +19,7 @@ import ScrollToTop from "./components/Frontpage/ScrollToTop";
 import CoursesIndex from "./components/courses/index";
 import CoursesPage from "./components/courses/CoursesPage";
 import CourseDetail from "./components/courses/CourseDetail";
+import AuthPage from "./components/auth/AuthPage"; // New import for authentication page
 import "./App.css";
 
 function App() {
@@ -125,6 +126,8 @@ function App() {
                 path="/courses/*"
                 element={<CoursesIndex setCursorVariant={setCursorVariant} />}
               />
+              {/* New route for AuthPage */}
+              <Route path="/auth" element={<AuthPage />} />
             </Routes>
             <Chatbot setCursorVariant={setCursorVariant} />
             <ScrollToTop setCursorVariant={setCursorVariant} />

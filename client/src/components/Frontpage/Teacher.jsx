@@ -268,10 +268,10 @@ const TeacherCard = ({ teacher, index }) => {
             <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               {teacher.rating}
             </span>
-            <span className="mx-1.5 text-gray-500">•</span>
-            <span className="text-sm text-gray-600 dark:text-gray-400">
+            {/* <span className="mx-1.5 text-gray-500">•</span> */}
+            {/* <span className="text-sm text-gray-600 dark:text-gray-400">
               {teacher.students.toLocaleString()} students
-            </span>
+            </span> */}
           </div>
 
           {/* Social links in monochrome */}

@@ -1,8 +1,6 @@
-"use client";
-
+import React from "react";
 import { motion } from "framer-motion";
 import { X, CheckCircle } from "lucide-react";
-import { AnimatedButton } from "./AnimatedComponents";
 
 const SuccessMessage = ({
   title,
@@ -10,13 +8,12 @@ const SuccessMessage = ({
   buttonText,
   onButtonClick,
   onClose,
-  setCursorVariant,
 }) => {
   return (
     <>
       <div className="flex justify-between items-center mb-6">
         <motion.h2
-          className="text-2xl font-bold text-teal-600"
+          className="text-2xl font-bold text-black"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -28,8 +25,7 @@ const SuccessMessage = ({
           whileTap={{ scale: 0.9 }}
           onClick={onClose}
           className="p-1 rounded-full hover:bg-gray-100"
-          onMouseEnter={() => setCursorVariant("hover")}
-          onMouseLeave={() => setCursorVariant("default")}
+          aria-label="Close"
         >
           <X className="h-5 w-5" />
         </motion.button>
@@ -93,14 +89,14 @@ const SuccessMessage = ({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.7 }}
       >
-        <AnimatedButton
+        <motion.button
           onClick={onButtonClick}
-          className="w-full py-2 text-white rounded-md bg-teal-500 hover:bg-teal-600"
-          onMouseEnter={() => setCursorVariant("hover")}
-          onMouseLeave={() => setCursorVariant("default")}
+          className="w-full py-2 px-4 bg-black hover:bg-gray-800 text-white font-medium rounded-md shadow-sm transition-colors duration-300"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
           {buttonText}
-        </AnimatedButton>
+        </motion.button>
       </motion.div>
     </>
   );

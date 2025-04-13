@@ -1,39 +1,16 @@
-// server/models/User.js
+// models/User.js
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
 
-const UserSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    match: [/.+\@.+\..+/, "Please fill a valid email address"],
-  },
-  mobile: {
-    type: String,
-    required: true,
-    match: [/^\d{10}$/, "Please fill a valid 10-digit mobile number"],
-  },
+  email: { type: String, unique: true, required: true },
+  mobile: { type: String, required: true },
   password: { type: String, required: true },
-  isVerified: { type: Boolean, default: false },
-  otpSecret: { type: String },
-  otpExpires: { type: Date },
-  // Fields for password reset functionality
-  passwordResetToken: { type: String },
-  passwordResetExpires: { type: Date },
+  role: { type: String, enum: ["student", "teacher"], required: true },
+  otp: String, // Temporarily store OTP
+  otpExpires: Date, // OTP expiration timestamp
+  resetToken: String, // Token used for password reset
+  resetTokenExpires: Date,
 });
 
-// Pre-save hook to hash password before saving user
-UserSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
-
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model("User", userSchema);

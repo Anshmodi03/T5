@@ -1,43 +1,48 @@
+// Header.jsx
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Menu,
-  X,
-  User,
-  BookOpen,
-  ChevronDown,
-  ChevronRight,
-  LogOut,
-  ChevronsDown,
-} from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
-import AuthModal from "../auth/AuthModal";
+import { Menu, X, User, ChevronDown, ChevronRight } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
-  const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
   const [showTeachersDropdown, setShowTeachersDropdown] = useState(false);
-
-  // New state variables for authentication modal
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authType, setAuthType] = useState("login");
-  const [userRole, setUserRole] = useState("student");
+  const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
 
   const location = useLocation();
   const pathname = location.pathname;
-  const dropdownRef = useRef(null);
   const coursesDropdownRef = useRef(null);
   const teachersDropdownRef = useRef(null);
+  const accountDropdownRef = useRef(null);
   const headerRef = useRef(null);
 
-  // Handle scroll and update the active section based on scroll position
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  // Custom animation variants for the account button
+  const accountButtonVariants = {
+    hidden: { opacity: 0, y: -10 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 300, damping: 20, delay: 0.2 },
+    },
+    hover: {
+      scale: 1.1,
+      boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)",
+      transition: { type: "spring", stiffness: 300, damping: 20 },
+    },
+    tap: { scale: 0.95 },
+  };
+
+  // Handle scroll to change header style and update active section.
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
-      // Determine the active section using section IDs
       const sections = document.querySelectorAll("section[id]");
       const scrollPosition = window.pageYOffset + 100;
       sections.forEach((section) => {
@@ -53,11 +58,8 @@ const Header = () => {
       });
     };
 
-    // Close dropdowns when clicking outside
+    // Close dropdowns on clicking outside
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowUserDropdown(false);
-      }
       if (
         coursesDropdownRef.current &&
         !coursesDropdownRef.current.contains(event.target)
@@ -69,6 +71,12 @@ const Header = () => {
         !teachersDropdownRef.current.contains(event.target)
       ) {
         setShowTeachersDropdown(false);
+      }
+      if (
+        accountDropdownRef.current &&
+        !accountDropdownRef.current.contains(event.target)
+      ) {
+        setIsAccountDropdownOpen(false);
       }
     };
 
@@ -104,19 +112,7 @@ const Header = () => {
     { name: "FAQ", link: "#faq", dropdown: null },
   ];
 
-  const toggleUserDropdown = () => {
-    setShowUserDropdown(!showUserDropdown);
-  };
-
-  // New function to open the authentication modal
-  const openAuthModal = (type, role) => {
-    setAuthType(type);
-    setUserRole(role);
-    setShowAuthModal(true);
-    setShowUserDropdown(false);
-  };
-
-  // Variants for dropdown animations using Framer Motion
+  // Framer Motion variants for dropdown animations
   const dropdownVariants = {
     hidden: { opacity: 0, y: -5, scale: 0.95 },
     visible: {
@@ -156,13 +152,23 @@ const Header = () => {
     },
   };
 
-  // Function to scroll to section
+  // Smooth scroll to section on click.
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
     if (section) {
       section.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  // Handle logout click: call logout function from auth and navigate to home.
+  const handleLogout = async () => {
+    await logout();
+    setIsAccountDropdownOpen(false);
+    navigate("/");
+  };
+
+  // Use the user's name if available; fallback to a generic "Account" text.
+  const accountDisplay = user && user.name ? user.name : "Account";
 
   return (
     <>
@@ -184,11 +190,9 @@ const Header = () => {
           >
             <Link to="/">
               <div className="h-12 w-auto bg-white rounded-md py-2 flex items-center justify-center cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300">
-                {/* This white container will make your black logo stand out */}
                 <span className="text-2xl font-bold text-black tracking-tight">
                   <img src="/T5-Logo.png" alt="T5" className="h-13 w-auto" />
                 </span>
-                {/* Replace the text above with your logo: */}
               </div>
             </Link>
           </motion.div>
@@ -233,7 +237,6 @@ const Header = () => {
                         />
                       </div>
                     </Link>
-
                     <AnimatePresence>
                       {showCoursesDropdown && (
                         <motion.div
@@ -285,7 +288,6 @@ const Header = () => {
                         }`}
                       />
                     </button>
-
                     <AnimatePresence>
                       {showTeachersDropdown && (
                         <motion.div
@@ -349,56 +351,75 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Authentication Button / Account Dropdown */}
-          <div className="hidden md:block relative" ref={dropdownRef}>
-            <motion.button
-              className="px-4 py-2 border border-white text-black bg-white rounded-md hover:shadow-lg transition-all flex items-center gap-2"
-              whileHover={{
-                scale: 1.05,
-                boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
-              }}
-              whileTap={{ scale: 0.95 }}
-              onClick={toggleUserDropdown}
-            >
-              <User className="h-4 w-4" />
-              Account
-              <ChevronDown
-                className={`h-4 w-4 transition-transform duration-200 ${
-                  showUserDropdown ? "rotate-180" : ""
-                }`}
-              />
-            </motion.button>
-
-            <AnimatePresence>
-              {showUserDropdown && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 overflow-hidden z-50"
+          {/* Account Button (Desktop) with hover for dropdown */}
+          <div
+            className="hidden md:block relative"
+            ref={accountDropdownRef}
+            onMouseEnter={() => setIsAccountDropdownOpen(true)}
+            onMouseLeave={() => setIsAccountDropdownOpen(false)}
+          >
+            {user ? (
+              <>
+                <motion.button
+                  className="px-4 py-2 border border-white bg-black text-white rounded-md flex items-center gap-2"
+                  variants={accountButtonVariants}
+                  initial="hidden"
+                  animate="visible"
+                  whileHover="hover"
+                  whileTap="tap"
                 >
-                  <div className="py-1">
-                    <a
-                      href="#"
-                      className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center gap-2"
-                      onClick={() => openAuthModal("login", "student")}
+                  <User className="h-4 w-4" />
+                  <span className="font-medium">{accountDisplay}</span>
+                  <ChevronDown
+                    className={`ml-1 h-4 w-4 transition-transform duration-300 ${
+                      isAccountDropdownOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </motion.button>
+                <AnimatePresence>
+                  {isAccountDropdownOpen && (
+                    <motion.div
+                      className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-black/95 ring-1 ring-white/20 z-50 overflow-hidden"
+                      variants={dropdownVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
                     >
-                      <BookOpen className="h-4 w-4" />
-                      Continue as Student
-                    </a>
-                    <a
-                      href="#"
-                      className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center gap-2 border-t border-gray-100"
-                      onClick={() => openAuthModal("login", "teacher")}
-                    >
-                      <LogOut className="h-4 w-4" />
-                      Continue as Teacher
-                    </a>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                      <div className="py-1">
+                        <Link to="/profile">
+                          <motion.div
+                            variants={itemVariants}
+                            className="px-4 py-2 text-sm text-white hover:bg-white/10 cursor-pointer"
+                          >
+                            Profile
+                          </motion.div>
+                        </Link>
+                        <motion.div
+                          variants={itemVariants}
+                          className="px-4 py-2 text-sm text-white hover:bg-white/10 cursor-pointer"
+                          onClick={handleLogout}
+                        >
+                          Logout
+                        </motion.div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </>
+            ) : (
+              <motion.button
+                className="px-4 py-2 border border-white bg-black text-white rounded-md flex items-center gap-2"
+                variants={accountButtonVariants}
+                initial="hidden"
+                animate="visible"
+                whileHover="hover"
+                whileTap="tap"
+                onClick={() => navigate("/auth")}
+              >
+                <User className="h-4 w-4" />
+                Login/Signup
+              </motion.button>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -425,7 +446,7 @@ const Header = () => {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed top-[60px] inset-x-0 z-40 bg-black/95 overflow-hidden md:hidden"
+            className="fixed top-[60px] inset-x-0 z-40 bg-black/95 overflow-y-auto md:hidden max-h-[calc(100vh-60px)]"
           >
             <div className="px-4 py-8 space-y-4">
               {navItems.map((item, index) => (
@@ -461,24 +482,46 @@ const Header = () => {
                 </div>
               ))}
               <div className="pt-4 border-t border-white/10">
-                <button className="w-full py-3 px-4 bg-white text-black rounded-md font-medium flex items-center justify-center gap-2">
-                  <User className="h-4 w-4" />
-                  Account
-                </button>
+                {user ? (
+                  <div className="space-y-2">
+                    <div className="px-4 pb-2 text-white font-medium">
+                      Hi, {accountDisplay}
+                    </div>
+                    <Link to="/profile">
+                      <button
+                        className="w-full py-2 px-4 bg-black text-white border border-white rounded-md font-medium flex items-center justify-center gap-2 hover:bg-gray-800"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <User className="h-4 w-4" />
+                        Profile
+                      </button>
+                    </Link>
+                    <button
+                      className="w-full py-2 px-4 bg-black text-white border border-white rounded-md font-medium flex items-center justify-center gap-2 hover:bg-gray-800"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        handleLogout();
+                      }}
+                    >
+                      <User className="h-4 w-4" />
+                      Logout
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="w-full py-3 px-4 bg-black text-white border border-white rounded-md font-medium flex items-center justify-center gap-2 hover:bg-gray-800"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      navigate("/auth");
+                    }}
+                  >
+                    <User className="h-4 w-4" />
+                    Account
+                  </button>
+                )}
               </div>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Authentication Modal */}
-      <AnimatePresence>
-        {showAuthModal && (
-          <AuthModal
-            authType={authType}
-            userRole={userRole}
-            onClose={() => setShowAuthModal(false)}
-          />
         )}
       </AnimatePresence>
     </>

@@ -1,97 +1,98 @@
-"use client";
+// LoginForm.jsx
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  MessageSquare,
+  CheckCircle,
+  X,
+} from "lucide-react";
+import { useAuth } from "./AuthContext";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { X, Mail, Lock, Eye, EyeOff, MessageSquare } from "lucide-react";
-import { AnimatedButton } from "./AnimatedComponents";
-import { login } from "./authService";
-
-const LoginForm = ({
-  userRole,
-  onClose,
-  onSwitchToSignup,
-  onSwitchToReset,
-  setCursorVariant,
-}) => {
+const LoginForm = ({ onSwitchToSignup, onSwitchToReset }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const data = await login({ email, password, userRole });
-      if (data.token) {
-        console.log("Login successful:", data);
-        // Store token and user info in localStorage so Header can detect logged-in state
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        onClose();
-      } else {
-        setError(data.message || "Login failed");
-      }
-    } catch (err) {
-      setError("An error occurred during login.");
+    setIsLoading(true);
+
+    // Call the login function from AuthContext (which now connects to http://localhost:8000)
+    const result = await login(email, password);
+    if (result.success) {
+      setShowSuccessPopup(true);
+      // Navigate to home/dashboard after a successful login.
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+    } else {
+      console.error("Login failed:", result.error);
     }
+    setIsLoading(false);
   };
 
   return (
     <>
-      <div className="flex justify-between items-center mb-6">
-        <motion.h2
-          className="text-2xl font-bold text-teal-600"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          Login
-        </motion.h2>
-        <motion.button
-          whileHover={{ rotate: 90 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={onClose}
-          className="p-1 rounded-full hover:bg-gray-100"
-          onMouseEnter={() => setCursorVariant("hover")}
-          onMouseLeave={() => setCursorVariant("default")}
-        >
-          <X className="h-5 w-5" />
-        </motion.button>
-      </div>
-
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-
-      <motion.div
-        className="mb-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        <div className="flex items-center justify-center mb-4">
+      {/* Success Popup */}
+      <AnimatePresence>
+        {showSuccessPopup && (
           <motion.div
-            className={`w-16 h-16 rounded-full flex items-center justify-center text-white overflow-hidden bg-teal-500`}
-            whileHover={{ scale: 1.05 }}
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            transition={{
-              type: "spring",
-              stiffness: 300,
-              damping: 15,
-            }}
+            className="fixed inset-0 flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            <span className="text-2xl font-bold">
-              {userRole === "student" ? "S" : "T"}
-            </span>
+            <motion.div
+              className="absolute inset-0 bg-black bg-opacity-40"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowSuccessPopup(false)}
+            ></motion.div>
+            <motion.div
+              className="bg-white rounded-lg shadow-xl p-6 m-4 max-w-sm w-full relative z-10"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "spring", damping: 25 }}
+            >
+              <button
+                onClick={() => setShowSuccessPopup(false)}
+                className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              >
+                <X size={18} />
+              </button>
+              <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 rounded-full bg-green-100">
+                <CheckCircle className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-center mb-2">
+                Login Successful!
+              </h3>
+              <p className="text-gray-600 text-center mb-4">
+                You've been logged in successfully. Redirecting to dashboard...
+              </p>
+              <motion.div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-green-500"
+                  initial={{ width: 0 }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 2, ease: "linear" }}
+                />
+              </motion.div>
+            </motion.div>
           </motion.div>
-        </div>
-        <h3 className="text-center text-lg font-medium">
-          Continue as{" "}
-          <span className="text-teal-500 font-semibold">
-            {userRole === "student" ? "Student" : "Teacher"}
-          </span>
-        </h3>
-      </motion.div>
+        )}
+      </AnimatePresence>
 
       <form onSubmit={handleSubmit}>
         <motion.div
@@ -111,10 +112,8 @@ const LoginForm = ({
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your email"
-              onMouseEnter={() => setCursorVariant("hover")}
-              onMouseLeave={() => setCursorVariant("default")}
               required
             />
           </div>
@@ -137,10 +136,8 @@ const LoginForm = ({
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your password"
-              onMouseEnter={() => setCursorVariant("hover")}
-              onMouseLeave={() => setCursorVariant("default")}
               required
             />
             <motion.button
@@ -149,8 +146,6 @@ const LoginForm = ({
               whileTap={{ scale: 0.9 }}
               className="absolute inset-y-0 right-0 pr-3 flex items-center"
               onClick={() => setShowPassword(!showPassword)}
-              onMouseEnter={() => setCursorVariant("hover")}
-              onMouseLeave={() => setCursorVariant("default")}
             >
               {showPassword ? (
                 <EyeOff className="h-5 w-5 text-gray-400" />
@@ -172,20 +167,16 @@ const LoginForm = ({
               type="checkbox"
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
-              className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
-              onMouseEnter={() => setCursorVariant("hover")}
-              onMouseLeave={() => setCursorVariant("default")}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
             <span className="ml-2 text-sm text-gray-600">Remember me</span>
           </label>
           <motion.button
             type="button"
-            className="text-sm text-teal-600 hover:text-teal-800 hover:underline"
-            onClick={onSwitchToReset}
-            onMouseEnter={() => setCursorVariant("hover")}
-            onMouseLeave={() => setCursorVariant("default")}
+            className="text-sm text-black hover:text-gray-700 hover:underline"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={onSwitchToReset}
           >
             Forgot password?
           </motion.button>
@@ -196,18 +187,45 @@ const LoginForm = ({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
         >
-          <AnimatedButton
+          <motion.button
             type="submit"
-            className="w-full py-2 text-white rounded-md mb-4 bg-teal-500 hover:bg-teal-600"
-            onMouseEnter={() => setCursorVariant("hover")}
-            onMouseLeave={() => setCursorVariant("default")}
+            className="w-full py-2 px-4 bg-black hover:bg-gray-800 text-white font-medium rounded-md shadow-sm transition-colors duration-300 flex items-center justify-center disabled:opacity-70"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            disabled={isLoading}
           >
-            Login
-          </AnimatedButton>
+            {isLoading ? (
+              <>
+                <svg
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Logging in...
+              </>
+            ) : (
+              "Log in"
+            )}
+          </motion.button>
         </motion.div>
 
         <motion.div
-          className="relative flex items-center justify-center mb-4"
+          className="relative flex items-center justify-center my-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}
@@ -229,9 +247,6 @@ const LoginForm = ({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.7 }}
-          onMouseEnter={() => setCursorVariant("hover")}
-          onMouseLeave={() => setCursorVariant("default")}
-          onClick={() => window.open("https://wa.me/1234567890", "_blank")}
         >
           <MessageSquare className="h-5 w-5" />
           Connect via WhatsApp
@@ -246,10 +261,8 @@ const LoginForm = ({
       >
         Don't have an account?{" "}
         <motion.button
-          className="text-teal-600 hover:text-teal-800 hover:underline font-medium"
+          className="text-black hover:text-gray-700 hover:underline font-medium"
           onClick={onSwitchToSignup}
-          onMouseEnter={() => setCursorVariant("hover")}
-          onMouseLeave={() => setCursorVariant("default")}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
