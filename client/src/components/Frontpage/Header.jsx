@@ -15,6 +15,7 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 
+// Desktop Account Section (remains unchanged for desktop)
 const AccountSection = () => {
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
   const accountDropdownRef = useRef(null);
@@ -32,23 +33,18 @@ const AccountSection = () => {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Handle logout click
   const handleLogout = async () => {
     await logout();
     setIsAccountDropdownOpen(false);
     navigate("/");
   };
 
-  // Use the user's name if available; fallback to "Account"
   const accountDisplay = user && user.name ? user.name : "Account";
   const userEmail = user && user.email ? user.email : "";
 
-  // Enhanced animation variants for the account button
   const buttonVariants = {
     initial: { scale: 1, boxShadow: "0 4px 20px rgba(0, 0, 0, 0.25)" },
     hover: {
@@ -62,7 +58,6 @@ const AccountSection = () => {
     },
   };
 
-  // Enhanced animation variants for the dropdown
   const dropdownVariants = {
     hidden: {
       opacity: 0,
@@ -83,7 +78,6 @@ const AccountSection = () => {
     },
   };
 
-  // Enhanced animation variants for dropdown items
   const itemVariants = {
     hidden: { opacity: 0, x: -20, filter: "blur(8px)" },
     visible: {
@@ -94,7 +88,6 @@ const AccountSection = () => {
     },
   };
 
-  // New ripple animation for menu item hover
   const rippleVariants = {
     initial: { scale: 0, opacity: 0.5 },
     animate: {
@@ -104,7 +97,7 @@ const AccountSection = () => {
     },
   };
 
-  // Non-authenticated view remains on click (redirect to /auth).
+  // Non-authenticated view remains a simple redirect to /auth.
   if (!user) {
     return (
       <motion.button
@@ -145,7 +138,7 @@ const AccountSection = () => {
     );
   }
 
-  // Authenticated view now opens on hover.
+  // Authenticated view (opens on hover)
   return (
     <div
       className="relative ml-4"
@@ -153,7 +146,7 @@ const AccountSection = () => {
       onMouseEnter={() => setIsAccountDropdownOpen(true)}
       onMouseLeave={() => setIsAccountDropdownOpen(false)}
     >
-      {/* Enhanced Account Button without onClick since dropdown opens on hover */}
+      {/* Enhanced Account Button */}
       <motion.button
         initial="initial"
         whileHover="hover"
@@ -409,12 +402,86 @@ const AccountSection = () => {
   );
 };
 
+// Mobile Account Section for Navigation (click to expand dropdown)
+const MobileAccountSection = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const accountDisplay = user && user.name ? user.name : "Account";
+  const userEmail = user && user.email ? user.email : "";
+
+  const handleLogout = async () => {
+    await logout();
+    setIsDropdownOpen(false);
+    navigate("/");
+  };
+
+  return (
+    <div className="mb-4">
+      <div
+        className="p-5 bg-black/80 rounded-lg shadow-lg flex items-center gap-4 cursor-pointer"
+        onClick={() => setIsDropdownOpen((prev) => !prev)}
+      >
+        <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center shadow-lg">
+          <User className="w-8 h-8 text-white" />
+        </div>
+        <div className="flex-1">
+          <p className="font-semibold text-white text-lg">{accountDisplay}</p>
+          {userEmail && <p className="text-xs text-white/60">{userEmail}</p>}
+        </div>
+        <div>
+          <ChevronDown
+            className={`h-5 w-5 text-white transition-transform ${
+              isDropdownOpen ? "rotate-180" : ""
+            }`}
+          />
+        </div>
+      </div>
+      <AnimatePresence>
+        {isDropdownOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mt-2 bg-black/80 rounded-lg overflow-hidden"
+          >
+            <Link to="/profile" onClick={() => setIsDropdownOpen(false)}>
+              <div className="px-5 py-3 text-white hover:bg-gray-800">
+                Profile
+              </div>
+            </Link>
+            <Link to="/settings" onClick={() => setIsDropdownOpen(false)}>
+              <div className="px-5 py-3 text-white hover:bg-gray-800">
+                Settings
+              </div>
+            </Link>
+            <Link to="/dashboard" onClick={() => setIsDropdownOpen(false)}>
+              <div className="px-5 py-3 text-white hover:bg-gray-800">
+                Dashboard
+              </div>
+            </Link>
+            <div
+              className="px-5 py-3 text-white hover:bg-gray-800 cursor-pointer"
+              onClick={handleLogout}
+            >
+              Logout
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
   const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
   const [showTeachersDropdown, setShowTeachersDropdown] = useState(false);
+  // New state for mobile nav dropdown toggles
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState({});
 
   const location = useLocation();
   const pathname = location.pathname;
@@ -425,7 +492,7 @@ const Header = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // Handle scroll to change header style and update active section.
+  // Update header style on scroll and update the active section.
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -468,7 +535,7 @@ const Header = () => {
     };
   }, []);
 
-  // Navigation items
+  // Navigation items (unchanged)
   const navItems = [
     { name: "Home", link: "/", dropdown: null },
     {
@@ -491,7 +558,7 @@ const Header = () => {
     { name: "FAQ", link: "#faq", dropdown: null },
   ];
 
-  // Framer Motion variants for dropdown animations
+  // Framer Motion variants for dropdown animations in desktop nav
   const dropdownVariants = {
     hidden: { opacity: 0, y: -5, scale: 0.95 },
     visible: {
@@ -535,11 +602,19 @@ const Header = () => {
     }
   };
 
+  // Toggle dropdown in mobile nav based on nav item name.
+  const toggleMobileDropdown = (name) => {
+    setMobileDropdownOpen((prev) => ({
+      ...prev,
+      [name]: !prev[name],
+    }));
+  };
+
   return (
     <>
       <header
         ref={headerRef}
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 py-3 ${
+        className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 py-3 ${
           scrolled
             ? "bg-gradient-to-r from-black/95 to-black/85 shadow-lg backdrop-blur-sm"
             : "bg-gradient-to-r from-black/70 to-black/60 backdrop-blur-sm"
@@ -716,12 +791,12 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Desktop Account Section (Enhanced Design with hover opening) */}
+          {/* Desktop Account Section */}
           <div className="hidden md:block">
             <AccountSection />
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center">
             <button
               className="text-white p-2 rounded-md focus:outline-none"
@@ -748,80 +823,79 @@ const Header = () => {
             className="fixed top-[60px] inset-x-0 z-40 bg-black/95 overflow-y-auto md:hidden max-h-[calc(100vh-60px)]"
           >
             <div className="px-4 py-8 space-y-4">
+              {/* Mobile Account Section with Dropdown Items */}
+              {user ? (
+                <MobileAccountSection />
+              ) : (
+                <button
+                  className="w-full py-3 px-4 bg-black text-white border border-white rounded-md font-medium flex items-center justify-center gap-2 hover:bg-gray-800"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    navigate("/auth");
+                  }}
+                >
+                  <User className="h-4 w-4" />
+                  Account
+                </button>
+              )}
+
+              {/* Mobile Navigation Items with Click-to-Toggle Dropdowns */}
               {navItems.map((item, index) => (
                 <div key={index} className="py-2">
                   {item.dropdown ? (
                     <div className="space-y-2">
-                      <div className="flex justify-between items-center text-white font-medium">
+                      <div
+                        onClick={() => toggleMobileDropdown(item.name)}
+                        className="flex justify-between items-center text-white font-medium cursor-pointer"
+                      >
                         <span>{item.name}</span>
+                        <ChevronDown
+                          className={`h-4 w-4 transition-transform duration-300 ${
+                            mobileDropdownOpen[item.name] ? "rotate-180" : ""
+                          }`}
+                        />
                       </div>
-                      <div className="pl-4 space-y-2 border-l border-white/20">
-                        {item.dropdown.map((subItem, subIndex) => (
-                          <a
-                            key={subIndex}
-                            href="#"
-                            className="block text-white/80 hover:text-white transition-colors py-1"
-                            onClick={() => setIsMenuOpen(false)}
+                      <AnimatePresence>
+                        {mobileDropdownOpen[item.name] && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="pl-4 space-y-2"
                           >
-                            {subItem}
-                          </a>
-                        ))}
-                      </div>
+                            {item.dropdown.map((subItem, subIndex) => (
+                              <Link
+                                key={subIndex}
+                                to={
+                                  item.name === "Courses"
+                                    ? subItem === "All Courses"
+                                      ? "/courses"
+                                      : `/courses?category=${subItem}`
+                                    : "#"
+                                }
+                                onClick={() => setIsMenuOpen(false)}
+                              >
+                                <div className="block text-white/80 hover:text-white transition-colors py-1">
+                                  {subItem}
+                                </div>
+                              </Link>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   ) : (
-                    <Link to={item.link}>
-                      <div
-                        className="block text-white font-medium py-1 cursor-pointer"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        {item.name}
-                      </div>
+                    <Link
+                      to={item.link}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="block text-white font-medium py-1 cursor-pointer"
+                    >
+                      {item.name}
                     </Link>
                   )}
                 </div>
               ))}
-              <div className="pt-4 border-t border-white/10">
-                {user ? (
-                  <div className="space-y-2">
-                    <div className="px-4 pb-2 text-white font-medium">
-                      Hi, {user.name ? user.name : "Account"}
-                    </div>
-                    <Link to="/profile">
-                      <button
-                        className="w-full py-2 px-4 bg-black text-white border border-white rounded-md font-medium flex items-center justify-center gap-2 hover:bg-gray-800"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <User className="h-4 w-4" />
-                        Profile
-                      </button>
-                    </Link>
-                    <button
-                      className="w-full py-2 px-4 bg-black text-white border border-white rounded-md font-medium flex items-center justify-center gap-2 hover:bg-gray-800"
-                      onClick={() => {
-                        setIsMenuOpen(false);
-                        (async () => {
-                          await logout();
-                          navigate("/");
-                        })();
-                      }}
-                    >
-                      <User className="h-4 w-4" />
-                      Logout
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    className="w-full py-3 px-4 bg-black text-white border border-white rounded-md font-medium flex items-center justify-center gap-2 hover:bg-gray-800"
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      navigate("/auth");
-                    }}
-                  >
-                    <User className="h-4 w-4" />
-                    Account
-                  </button>
-                )}
-              </div>
             </div>
           </motion.div>
         )}
