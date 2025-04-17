@@ -23,7 +23,10 @@ import CourseDetail from "./components/courses/CourseDetail";
 import AuthPage from "./components/auth/AuthPage";
 import Certification from "./components/Frontpage/Certification";
 import CareerGuidance from "./components/Frontpage/CarrerGuidance";
-import "./App.css";
+import ELearning from "./components/Frontpage/ELearning";
+import Workshop from "./components/Frontpage/Workshop";
+import Webinar from "./components/Frontpage/Webinar";
+import Mentorship from "./components/Frontpage/Mentorship"; // Added import
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -128,7 +131,7 @@ function App() {
               />
               {/* Authentication */}
               <Route path="/auth" element={<AuthPage />} />
-              {/* New routes for Certification and Career Guidance */}
+              {/* New routes for Certification, Career Guidance and E-Learning */}
               <Route
                 path="/certification"
                 element={<Certification setCursorVariant={setCursorVariant} />}
@@ -136,6 +139,25 @@ function App() {
               <Route
                 path="/career-guidance"
                 element={<CareerGuidance setCursorVariant={setCursorVariant} />}
+              />
+              <Route
+                path="/e-learning"
+                element={<ELearning setCursorVariant={setCursorVariant} />}
+              />
+              {/* Workshop route */}
+              <Route
+                path="/workshops"
+                element={<Workshop setCursorVariant={setCursorVariant} />}
+              />
+              {/* Webinar route */}
+              <Route
+                path="/webinars"
+                element={<Webinar setCursorVariant={setCursorVariant} />}
+              />
+              {/* Mentorship route */}
+              <Route
+                path="/mentorship"
+                element={<Mentorship setCursorVariant={setCursorVariant} />}
               />
             </Routes>
             <Chatbot setCursorVariant={setCursorVariant} />

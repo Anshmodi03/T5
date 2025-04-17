@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const Footer = ({ setCursorVariant }) => {
   const currentYear = new Date().getFullYear();
@@ -103,7 +104,7 @@ const Footer = ({ setCursorVariant }) => {
     ],
     Services: [
       { name: "E-Learning", url: "/e-learning" },
-      { name: "Certifications", url: "/certification" }, // Updated Certification link
+      { name: "Certifications", url: "/certification" },
       { name: "Workshops", url: "/workshops" },
       { name: "Webinars", url: "/webinars" },
       { name: "Career Guidance", url: "/career-guidance" },
@@ -173,6 +174,8 @@ const Footer = ({ setCursorVariant }) => {
     },
   ];
 
+  const MotionLink = motion(Link);
+
   return (
     <footer className="bg-black text-white">
       <div className="container mx-auto py-12 px-4">
@@ -193,7 +196,7 @@ const Footer = ({ setCursorVariant }) => {
                 <motion.a
                   key={index}
                   href={link.url}
-                  className="transition-colors text-white hover:text-gray-300"
+                  className={`transition-colors text-white ${link.hoverColor}`}
                   whileHover={{ scale: 1.2, cursor: "pointer" }}
                   whileTap={{ scale: 0.9 }}
                   onMouseEnter={() => setCursorVariant("hover")}
@@ -213,15 +216,15 @@ const Footer = ({ setCursorVariant }) => {
               <ul className="space-y-2">
                 {links.map((link, linkIndex) => (
                   <li key={linkIndex}>
-                    <motion.a
-                      href={link.url}
+                    <MotionLink
+                      to={link.url}
                       className="hover:text-white transition-colors inline-block"
                       whileHover={{ x: 5 }}
                       onMouseEnter={() => setCursorVariant("hover")}
                       onMouseLeave={() => setCursorVariant("default")}
                     >
                       {link.name}
-                    </motion.a>
+                    </MotionLink>
                   </li>
                 ))}
               </ul>
